@@ -21,7 +21,7 @@
 * [18.算子调优之reduceByKey本地聚合介绍](content/18.算子调优之reduceByKey本地聚合介绍.md)
 * [19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM](content/19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM.md)
 * [20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败](content/20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败.md)
-* [21.troubleshooting之解决application因为资源不够报错](content/21.troubleshooting之解决application因为资源不够报错)
+* [21.troubleshooting之解决application因为资源不够报错](content/21.troubleshooting之解决application因为资源不够报错.md)
 * [22.troubleshooting之解决各种序列化导致的报错](content/22.troubleshooting之解决各种序列化导致的报错.md)
 * [23.troubleshooting之解决算子函数返回NULL导致的问题](content/23.troubleshooting之解决算子函数返回NULL导致的问题.md)
 * [24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题](content/24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题.md)
@@ -35,3 +35,4 @@
 * [32.数据倾斜解决方案之sample采样倾斜key单独进行join](content/32.数据倾斜解决方案之sample采样倾斜key单独进行join.md)
 * [33.数据倾斜解决方案之使用随机数以及扩容表进行join](content/33.数据倾斜解决方案之使用随机数以及扩容表进行join.md)
 * [34.shuffleread中HashMap](content/34.shuffleread中的HashMap.md)
+
