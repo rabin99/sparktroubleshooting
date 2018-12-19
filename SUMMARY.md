@@ -33,4 +33,4 @@
 * [30.数据倾斜解决方案之将reduce join转换为map join](content/30.数据倾斜解决方案之将reduce join转换为map join.md)
 * [31.数据倾斜解决方案之sample采样倾斜key单独进行join](content/31.数据倾斜解决方案之sample采样倾斜key单独进行join.md)
 * [32.数据倾斜解决方案之使用随机数以及扩容表进行join](content/32.数据倾斜解决方案之使用随机数以及扩容表进行join.md)
-
+* [33.shuffleread中HashMap](shuffleread中的HashMap.md)
