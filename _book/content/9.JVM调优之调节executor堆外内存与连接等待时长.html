@@ -1,0 +1,725 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>9.JVM调优之调节executor堆外内存与连接等待时长 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="10.Shuffle调优之原理概述.html" />
+    
+    
+    <link rel="prev" href="8.JVM调优之原理概述以及降低cache操作的内存占比.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="1.性能调优之在实际项目中分配更多资源.html">
+            
+                <a href="1.性能调优之在实际项目中分配更多资源.html">
+            
+                    
+                    1.性能调优之在实际项目中分配更多资源
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="2.性能调优之在实际项目中调节并行度.html">
+            
+                <a href="2.性能调优之在实际项目中调节并行度.html">
+            
+                    
+                    2.性能调优之在实际项目中调节并行度
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="3.性能调优之在实际项目中重构RDD架构以及RDD持久化.html">
+            
+                <a href="3.性能调优之在实际项目中重构RDD架构以及RDD持久化.html">
+            
+                    
+                    3.性能调优之在实际项目中重构RDD架构以及RDD持久化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="4.性能调优之在实际项目中广播大变量.html">
+            
+                <a href="4.性能调优之在实际项目中广播大变量.html">
+            
+                    
+                    4.性能调优之在实际项目中广播大变量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="5.性能调优之在实际项目中使用Kryo序列化.html">
+            
+                <a href="5.性能调优之在实际项目中使用Kryo序列化.html">
+            
+                    
+                    5.性能调优之在实际项目中使用Kryo序列化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="6.性能调优之在实际项目中使用fastutil优化数据格式.html">
+            
+                <a href="6.性能调优之在实际项目中使用fastutil优化数据格式.html">
+            
+                    
+                    6.性能调优之在实际项目中使用fastutil优化数据格式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="7.性能调优之在实际项目中调节数据本地化等待时长.html">
+            
+                <a href="7.性能调优之在实际项目中调节数据本地化等待时长.html">
+            
+                    
+                    7.性能调优之在实际项目中调节数据本地化等待时长
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="8.JVM调优之原理概述以及降低cache操作的内存占比.html">
+            
+                <a href="8.JVM调优之原理概述以及降低cache操作的内存占比.html">
+            
+                    
+                    8.JVM调优之原理概述以及降低cache操作的内存占比
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.10" data-path="9.JVM调优之调节executor堆外内存与连接等待时长.html">
+            
+                <a href="9.JVM调优之调节executor堆外内存与连接等待时长.html">
+            
+                    
+                    9.JVM调优之调节executor堆外内存与连接等待时长
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="10.Shuffle调优之原理概述.html">
+            
+                <a href="10.Shuffle调优之原理概述.html">
+            
+                    
+                    10.Shuffle调优之原理概述
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12" data-path="11.Shuffle调优之合并map端输出文件.html">
+            
+                <a href="11.Shuffle调优之合并map端输出文件.html">
+            
+                    
+                    11.Shuffle调优之合并map端输出文件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13" data-path="12.Shuffle调优之调节map端内存缓冲与reduce端内存占比.html">
+            
+                <a href="12.Shuffle调优之调节map端内存缓冲与reduce端内存占比.html">
+            
+                    
+                    12.Shuffle调优之调节map端内存缓冲与reduce端内存占比
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14" data-path="13.Shuffle调优之HashShuffleManager与SortShuffleManager.html">
+            
+                <a href="13.Shuffle调优之HashShuffleManager与SortShuffleManager.html">
+            
+                    
+                    13.Shuffle调优之HashShuffleManager与SortShuffleManager
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15" data-path="14.算子调优之MapPartitions提升Map类操作性能.html">
+            
+                <a href="14.算子调优之MapPartitions提升Map类操作性能.html">
+            
+                    
+                    14.算子调优之MapPartitions提升Map类操作性能
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.16" data-path="15.算子调优之filter过后使用coalesce减少分区数量.html">
+            
+                <a href="15.算子调优之filter过后使用coalesce减少分区数量.html">
+            
+                    
+                    15.算子调优之filter过后使用coalesce减少分区数量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.17" data-path="16.算子调优之使用foreachPartition优化写数据库性能.html">
+            
+                <a href="16.算子调优之使用foreachPartition优化写数据库性能.html">
+            
+                    
+                    16.算子调优之使用foreachPartition优化写数据库性能
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.18" data-path="17.算子调优之使用repartition解决Spark SQL低并行度的性能问题.html">
+            
+                <a href="17.算子调优之使用repartition解决Spark SQL低并行度的性能问题.html">
+            
+                    
+                    17.算子调优之使用repartition解决Spark SQL低并行度的性能问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.19" data-path="18.算子调优之reduceByKey本地聚合介绍.html">
+            
+                <a href="18.算子调优之reduceByKey本地聚合介绍.html">
+            
+                    
+                    18.算子调优之reduceByKey本地聚合介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.20" data-path="19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM.html">
+            
+                <a href="19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM.html">
+            
+                    
+                    19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.21" data-path="20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败.html">
+            
+                <a href="20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败.html">
+            
+                    
+                    20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22" data-path="21.troubleshooting之解决application因为资源不够报错.html">
+            
+                <a href="21.troubleshooting之解决application因为资源不够报错.html">
+            
+                    
+                    21.troubleshooting之解决application因为资源不够报错
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.23" data-path="22.troubleshooting之解决各种序列化导致的报错.html">
+            
+                <a href="22.troubleshooting之解决各种序列化导致的报错.html">
+            
+                    
+                    22.troubleshooting之解决各种序列化导致的报错
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.24" data-path="23.troubleshooting之解决算子函数返回NULL导致的问题.html">
+            
+                <a href="23.troubleshooting之解决算子函数返回NULL导致的问题.html">
+            
+                    
+                    23.troubleshooting之解决算子函数返回NULL导致的问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.25" data-path="24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题.html">
+            
+                <a href="24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题.html">
+            
+                    
+                    24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26" data-path="25.troubleshooting之解决yarn-cluster模式的JVM栈内存溢出问题.html">
+            
+                <a href="25.troubleshooting之解决yarn-cluster模式的JVM栈内存溢出问题.html">
+            
+                    
+                    25.troubleshooting之解决yarn-cluster模式的JVM栈内存溢出问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.27" data-path="26.troubleshooting之错误的持久化方式以及checkpoint的使用.html">
+            
+                <a href="26.troubleshooting之错误的持久化方式以及checkpoint的使用.html">
+            
+                    
+                    26.troubleshooting之错误的持久化方式以及checkpoint的使用
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.28" data-path="27.数据倾斜解决方案之原理以及现象分析.html">
+            
+                <a href="27.数据倾斜解决方案之原理以及现象分析.html">
+            
+                    
+                    27.数据倾斜解决方案之原理以及现象分析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.29" data-path="28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.html">
+            
+                <a href="28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.html">
+            
+                    
+                    28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.30" data-path="29.数据倾斜解决方案之提高shuffle操作reduce并行度.html">
+            
+                <a href="29.数据倾斜解决方案之提高shuffle操作reduce并行度.html">
+            
+                    
+                    29.数据倾斜解决方案之提高shuffle操作reduce并行度
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.31" data-path="30.数据倾斜解决方案之使用随机key实现双重聚合.html">
+            
+                <a href="30.数据倾斜解决方案之使用随机key实现双重聚合.html">
+            
+                    
+                    30.数据倾斜解决方案之使用随机key实现双重聚合
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.32" data-path="31.数据倾斜解决方案之将reduce join转换为map join.html">
+            
+                <a href="31.数据倾斜解决方案之将reduce join转换为map join.html">
+            
+                    
+                    31.数据倾斜解决方案之将reduce join转换为map join
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.33" data-path="32.数据倾斜解决方案之sample采样倾斜key单独进行join.html">
+            
+                <a href="32.数据倾斜解决方案之sample采样倾斜key单独进行join.html">
+            
+                    
+                    32.数据倾斜解决方案之sample采样倾斜key单独进行join
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.34" data-path="33.数据倾斜解决方案之使用随机数以及扩容表进行join.html">
+            
+                <a href="33.数据倾斜解决方案之使用随机数以及扩容表进行join.html">
+            
+                    
+                    33.数据倾斜解决方案之使用随机数以及扩容表进行join
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.35" data-path="34.shuffleread中的HashMap.html">
+            
+                <a href="34.shuffleread中的HashMap.html">
+            
+                    
+                    34.shuffleread中HashMap
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >9.JVM调优之调节executor堆外内存与连接等待时长</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="9jvm&#x8C03;&#x4F18;&#x4E4B;&#x8C03;&#x8282;executor&#x5806;&#x5916;&#x5185;&#x5B58;&#x4E0E;&#x8FDE;&#x63A5;&#x7B49;&#x5F85;&#x65F6;&#x957F;">9.JVM&#x8C03;&#x4F18;&#x4E4B;&#x8C03;&#x8282;executor&#x5806;&#x5916;&#x5185;&#x5B58;&#x4E0E;&#x8FDE;&#x63A5;&#x7B49;&#x5F85;&#x65F6;&#x957F;</h1>
+<h4 id="&#x76F4;&#x63A5;&#x4F7F;&#x7528;">&#x76F4;&#x63A5;&#x4F7F;&#x7528;</h4>
+<pre><code class="lang-shell">--conf spark.yarn.executor.memoryOverhead=2048  # yarn&#x6A21;&#x5F0F;&#x4E0B;&#x5806;&#x5916;&#x5185;&#x5B58;
+(2.4&#x7248;&#x672C;&#x4E3A;&#xFF1A;spark.executor.memoryOverhead)   # yarn&#x6A21;&#x5F0F;&#x4E0B;&#x5806;&#x5916;&#x5185;&#x5B58;
+--conf spark.core.connection.ack.wait.timeout=300 # &#x7B49;&#x5F85;&#x65F6;&#x957F;&#xFF0C;&#x907F;&#x514D;&#x5BF9;&#x65B9;gc&#x65F6;stop world&#x5BFC;&#x81F4;&#x6587;&#x4EF6;&#x4E22;&#x5931;
+</code></pre>
+<h3 id="&#x5806;&#x5916;&#x5185;&#x5B58;&#x548C;&#x8FDE;&#x63A5;&#x7B49;&#x5F85;&#x65F6;&#x957F;&#x914D;&#x7F6E;">&#x5806;&#x5916;&#x5185;&#x5B58;&#x548C;&#x8FDE;&#x63A5;&#x7B49;&#x5F85;&#x65F6;&#x957F;&#x914D;&#x7F6E;</h3>
+<pre><code class="lang-shell">/usr/local/spark/bin/spark-submit \
+--class com.ibeifeng.sparkstudy.WordCount \
+--num-executors 80 \   # 50-100
+--driver-memory 6g \   # 1-5
+--executor-memory 6g \ # 6-10  &#x603B;&#x5171;&#x4E00;&#x6B21;&#x7528;&#x6389;&#x63A5;&#x8FD1;500G&#x5185;&#x5B58;
+--executor-cores 3 \   
+--master yarn-cluster \
+--queue root.default \
+--conf spark.yarn.executor.memoryOverhead=2048 \   # yarn&#x6A21;&#x5F0F;&#x4E0B;&#x5806;&#x5916;&#x5185;&#x5B58;
+--conf spark.core.connection.ack.wait.timeout=300 \  # &#x7B49;&#x5F85;&#x65F6;&#x957F;&#xFF0C;&#x907F;&#x514D;&#x5BF9;&#x65B9;gc&#x65F6;stop world&#x5BFC;&#x81F4;&#x6587;&#x4EF6;&#x4E22;&#x5931;
+/usr/local/spark/spark.jar \
+${1}
+</code></pre>
+<h4 id="executor&#x5806;&#x5916;&#x5185;&#x5B58;">executor&#x5806;&#x5916;&#x5185;&#x5B58;</h4>
+<p><img src="assets/9-1.png" alt=""></p>
+<p>&#x6709;&#x65F6;&#x5019;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x7684;spark&#x4F5C;&#x4E1A;&#x5904;&#x7406;&#x7684;&#x6570;&#x636E;&#x91CF;&#x7279;&#x522B;&#x7279;&#x522B;&#x5927;&#xFF0C;&#x51E0;&#x4EBF;&#x6570;&#x636E;&#x91CF;&#xFF1B;&#x7136;&#x540E;spark&#x4F5C;&#x4E1A;&#x4E00;&#x8FD0;&#x884C;&#xFF0C;&#x65F6;&#x4E0D;&#x65F6;&#x7684;&#x62A5;&#x9519;&#xFF0C;shuffle file cannot find&#xFF0C;executor&#x3001;task lost&#xFF0C;out of memory&#xFF08;&#x5185;&#x5B58;&#x6EA2;&#x51FA;&#xFF09;&#xFF1B;</p>
+<p>&#x53EF;&#x80FD;&#x662F;&#x8BF4;executor&#x7684;&#x5806;&#x5916;&#x5185;&#x5B58;&#x4E0D;&#x592A;&#x591F;&#x7528;&#xFF0C;&#x5BFC;&#x81F4;executor&#x5728;&#x8FD0;&#x884C;&#x7684;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x53EF;&#x80FD;&#x4F1A;&#x5185;&#x5B58;&#x6EA2;&#x51FA;&#xFF1B;&#x7136;&#x540E;&#x53EF;&#x80FD;&#x5BFC;&#x81F4;&#x540E;&#x7EED;&#x7684;stage&#x7684;task&#x5728;&#x8FD0;&#x884C;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x53EF;&#x80FD;&#x8981;&#x4ECE;&#x4E00;&#x4E9B;executor&#x4E2D;&#x53BB;&#x62C9;&#x53D6;shuffle map output&#x6587;&#x4EF6;&#xFF0C;&#x4F46;&#x662F;executor&#x53EF;&#x80FD;&#x5DF2;&#x7ECF;&#x6302;&#x6389;&#x4E86;&#xFF0C;&#x5173;&#x8054;&#x7684;block manager&#x4E5F;&#x6CA1;&#x6709;&#x4E86;&#xFF1B;&#x6240;&#x4EE5;&#x53EF;&#x80FD;&#x4F1A;&#x62A5;shuffle output file not found&#xFF1B;resubmitting task&#xFF1B;executor lost&#xFF1B;spark&#x4F5C;&#x4E1A;&#x5F7B;&#x5E95;&#x5D29;&#x6E83;&#x3002;</p>
+<p>&#x4E0A;&#x8FF0;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x5C31;&#x53EF;&#x4EE5;&#x53BB;&#x8003;&#x8651;&#x8C03;&#x8282;&#x4E00;&#x4E0B;executor&#x7684;&#x5806;&#x5916;&#x5185;&#x5B58;&#x3002;&#x4E5F;&#x8BB8;&#x5C31;&#x53EF;&#x4EE5;&#x907F;&#x514D;&#x62A5;&#x9519;&#xFF1B;&#x6B64;&#x5916;&#xFF0C;&#x6709;&#x65F6;&#xFF0C;&#x5806;&#x5916;&#x5185;&#x5B58;&#x8C03;&#x8282;&#x7684;&#x6BD4;&#x8F83;&#x5927;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5BF9;&#x4E8E;&#x6027;&#x80FD;&#x6765;&#x8BF4;&#xFF0C;&#x4E5F;&#x4F1A;&#x5E26;&#x6765;&#x4E00;&#x5B9A;&#x7684;&#x63D0;&#x5347;&#x3002;</p>
+<h4 id="&#x5177;&#x4F53;&#x914D;&#x7F6E;&#x4E00;&#x5B9A;&#x8981;&#x5728;spark-submit&#x811A;&#x672C;&#x4E2D;&#x53BB;&#x8BBE;&#x7F6E;&#x3002;">&#x5177;&#x4F53;&#x914D;&#x7F6E;(&#x4E00;&#x5B9A;&#x8981;&#x5728;spark-submit&#x811A;&#x672C;&#x4E2D;&#x53BB;&#x8BBE;&#x7F6E;&#x3002;)</h4>
+<pre><code class="lang-shell"># &#x4E0D;&#x80FD;&#x5728;&#x4EE3;&#x7801;&#x4E2D;&#x8BBE;&#x7F6E;&#xFF0C;&#x8981;&#x5728;spark-submit&#x8BBE;&#x7F6E;
+--conf spark.yarn.executor.memoryOverhead=2048
+</code></pre>
+<p>spark-submit&#x811A;&#x672C;&#x91CC;&#x9762;&#xFF0C;&#x53BB;&#x7528;--conf&#x7684;&#x65B9;&#x5F0F;&#xFF0C;&#x53BB;&#x6DFB;&#x52A0;&#x914D;&#x7F6E;&#xFF1B;&#x4E00;&#x5B9A;&#x8981;&#x6CE8;&#x610F;&#xFF01;&#xFF01;&#xFF01;</p>
+<p>&#x5207;&#x8BB0;&#xFF0C;&#x4E0D;&#x662F;&#x5728;&#x4F60;&#x7684;spark&#x4F5C;&#x4E1A;&#x4EE3;&#x7801;&#x4E2D;&#xFF0C;&#x7528;new SparkConf().set()&#x8FD9;&#x79CD;&#x65B9;&#x5F0F;&#x53BB;&#x8BBE;&#x7F6E;&#xFF0C;&#x4E0D;&#x8981;&#x8FD9;&#x6837;&#x53BB;&#x8BBE;&#x7F6E;&#xFF0C;&#x662F;&#x6CA1;&#x6709;&#x7528;&#x7684;&#xFF01;</p>
+<p>spark.yarn.executor.memoryOverhead&#xFF08;&#x770B;&#x540D;&#x5B57;&#xFF0C;&#x987E;&#x540D;&#x601D;&#x4E49;&#xFF0C;&#x9488;&#x5BF9;&#x7684;&#x662F;&#x57FA;&#x4E8E;yarn&#x7684;&#x63D0;&#x4EA4;&#x6A21;&#x5F0F;&#xFF09;</p>
+<p>&#x9ED8;&#x8BA4;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x8FD9;&#x4E2A;&#x5806;&#x5916;&#x5185;&#x5B58;&#x4E0A;&#x9650;&#x5927;&#x6982;&#x662F;300&#x591A;M&#xFF1B;&#x540E;&#x6765;&#x6211;&#x4EEC;&#x901A;&#x5E38;&#x9879;&#x76EE;&#x4E2D;&#xFF0C;&#x771F;&#x6B63;&#x5904;&#x7406;&#x5927;&#x6570;&#x636E;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x8FD9;&#x91CC;&#x90FD;&#x4F1A;&#x51FA;&#x73B0;&#x95EE;&#x9898;&#xFF0C;&#x5BFC;&#x81F4;spark&#x4F5C;&#x4E1A;&#x53CD;&#x590D;&#x5D29;&#x6E83;&#xFF0C;&#x65E0;&#x6CD5;&#x8FD0;&#x884C;&#xFF1B;&#x6B64;&#x65F6;&#x5C31;&#x4F1A;&#x53BB;&#x8C03;&#x8282;&#x8FD9;&#x4E2A;&#x53C2;&#x6570;&#xFF0C;&#x5230;&#x81F3;&#x5C11;1G&#xFF08;1024M&#xFF09;&#xFF0C;&#x751A;&#x81F3;&#x8BF4;2G&#x3001;4G</p>
+<p>&#x901A;&#x5E38;&#x8FD9;&#x4E2A;&#x53C2;&#x6570;&#x8C03;&#x8282;&#x4E0A;&#x53BB;&#x4EE5;&#x540E;&#xFF0C;&#x5C31;&#x4F1A;&#x907F;&#x514D;&#x6389;&#x67D0;&#x4E9B;JVM OOM&#x7684;&#x5F02;&#x5E38;&#x95EE;&#x9898;&#xFF0C;&#x540C;&#x65F6;&#x5462;&#xFF0C;&#x4F1A;&#x8BA9;&#x6574;&#x4F53;spark&#x4F5C;&#x4E1A;&#x7684;&#x6027;&#x80FD;&#xFF0C;&#x5F97;&#x5230;&#x8F83;&#x5927;&#x7684;&#x63D0;&#x5347;&#x3002;</p>
+<p>&#x6848;&#x4F8B;&#xFF1A;<a href="https://blog.csdn.net/pearl8899/article/details/80368018" target="_blank">Spark &#x8FD0;&#x884C;&#x5185;&#x5B58;&#x6EA2;&#x51FA;&#x95EE;&#x9898;&#xFF1A;memoryOverhead issue in Spark</a></p>
+<h3 id="&#x8FDE;&#x63A5;&#x65F6;&#x957F;">&#x8FDE;&#x63A5;&#x65F6;&#x957F;</h3>
+<p><img src="assets/9.png" alt=""></p>
+<p>&#x6B64;&#x65F6;&#x5462;&#xFF0C;&#x5C31;&#x4F1A;&#x6CA1;&#x6709;&#x54CD;&#x5E94;&#xFF0C;&#x65E0;&#x6CD5;&#x5EFA;&#x7ACB;&#x7F51;&#x7EDC;&#x8FDE;&#x63A5;&#xFF1B;&#x4F1A;&#x5361;&#x4F4F;&#xFF1B;ok&#xFF0C;spark&#x9ED8;&#x8BA4;&#x7684;&#x7F51;&#x7EDC;&#x8FDE;&#x63A5;&#x7684;&#x8D85;&#x65F6;&#x65F6;&#x957F;&#xFF0C;&#x662F;60s&#xFF1B;&#x5982;&#x679C;&#x5361;&#x4F4F;60s&#x90FD;&#x65E0;&#x6CD5;&#x5EFA;&#x7ACB;&#x8FDE;&#x63A5;&#x7684;&#x8BDD;&#xFF0C;&#x90A3;&#x4E48;&#x5C31;&#x5BA3;&#x544A;&#x5931;&#x8D25;&#x4E86;&#x3002;</p>
+<p>&#x78B0;&#x5230;&#x4E00;&#x79CD;&#x60C5;&#x51B5;&#xFF0C;&#x5076;&#x5C14;&#xFF0C;&#x5076;&#x5C14;&#xFF0C;&#x5076;&#x5C14;&#xFF01;&#xFF01;&#xFF01;&#x6CA1;&#x6709;&#x89C4;&#x5F8B;&#xFF01;&#xFF01;&#xFF01;&#x67D0;&#x67D0;file&#x3002;&#x4E00;&#x4E32;file id&#x3002;uuid&#xFF08;dsfsfd-2342vs--sdf--sdfsd&#xFF09;&#x3002;not found&#x3002;file lost&#x3002;</p>
+<p>&#x8FD9;&#x79CD;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x5F88;&#x6709;&#x53EF;&#x80FD;&#x662F;&#x6709;&#x90A3;&#x4EFD;&#x6570;&#x636E;&#x7684;executor&#x5728;jvm gc&#x3002;&#x6240;&#x4EE5;&#x62C9;&#x53D6;&#x6570;&#x636E;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5EFA;&#x7ACB;&#x4E0D;&#x4E86;&#x8FDE;&#x63A5;&#x3002;&#x7136;&#x540E;&#x8D85;&#x8FC7;&#x9ED8;&#x8BA4;60s&#x4EE5;&#x540E;&#xFF0C;&#x76F4;&#x63A5;&#x5BA3;&#x544A;&#x5931;&#x8D25;&#x3002;</p>
+<p>&#x62A5;&#x9519;&#x51E0;&#x6B21;&#xFF0C;&#x51E0;&#x6B21;&#x90FD;&#x62C9;&#x53D6;&#x4E0D;&#x5230;&#x6570;&#x636E;&#x7684;&#x8BDD;&#xFF0C;&#x53EF;&#x80FD;&#x4F1A;&#x5BFC;&#x81F4;spark&#x4F5C;&#x4E1A;&#x7684;&#x5D29;&#x6E83;&#x3002;&#x4E5F;&#x53EF;&#x80FD;&#x4F1A;&#x5BFC;&#x81F4;DAGScheduler&#xFF0C;&#x53CD;&#x590D;&#x63D0;&#x4EA4;&#x51E0;&#x6B21;stage&#x3002;TaskScheduler&#xFF0C;&#x53CD;&#x590D;&#x63D0;&#x4EA4;&#x51E0;&#x6B21;task&#x3002;&#x5927;&#x5927;&#x5EF6;&#x957F;&#x6211;&#x4EEC;&#x7684;spark&#x4F5C;&#x4E1A;&#x7684;&#x8FD0;&#x884C;&#x65F6;&#x95F4;&#x3002;</p>
+<p>&#x53EF;&#x4EE5;&#x8003;&#x8651;&#x8C03;&#x8282;&#x8FDE;&#x63A5;&#x7684;&#x8D85;&#x65F6;&#x65F6;&#x957F;&#x3002;</p>
+<pre><code class="lang-shell">--conf spark.core.connection.ack.wait.timeout=300
+</code></pre>
+<p>spark-submit&#x811A;&#x672C;&#xFF0C;&#x5207;&#x8BB0;&#xFF0C;&#x4E0D;&#x662F;&#x5728;new SparkConf().set()&#x8FD9;&#x79CD;&#x65B9;&#x5F0F;&#x6765;&#x8BBE;&#x7F6E;&#x7684;&#x3002;</p>
+<p>spark.core.connection.ack.wait.timeout&#xFF08;spark core&#xFF0C;connection&#xFF0C;&#x8FDE;&#x63A5;&#xFF0C;ack&#xFF0C;wait timeout&#xFF0C;&#x5EFA;&#x7ACB;&#x4E0D;&#x4E0A;&#x8FDE;&#x63A5;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x8D85;&#x65F6;&#x7B49;&#x5F85;&#x65F6;&#x957F;&#xFF09;</p>
+<p>&#x8C03;&#x8282;&#x8FD9;&#x4E2A;&#x503C;&#x6BD4;&#x8F83;&#x5927;&#x4EE5;&#x540E;&#xFF0C;&#x901A;&#x5E38;&#x6765;&#x8BF4;&#xFF0C;&#x53EF;&#x4EE5;&#x907F;&#x514D;&#x90E8;&#x5206;&#x7684;&#x5076;&#x5C14;&#x51FA;&#x73B0;&#x7684;&#x67D0;&#x67D0;&#x6587;&#x4EF6;&#x62C9;&#x53D6;&#x5931;&#x8D25;&#xFF0C;&#x67D0;&#x67D0;&#x6587;&#x4EF6;lost&#x6389;</p>
+<h3 id="&#x4E3A;&#x4EC0;&#x4E48;&#x5728;&#x8FD9;&#x91CC;&#x8BB2;&#x8FD9;&#x4E24;&#x4E2A;&#x53C2;&#x6570;&#x5462;&#xFF1F;">&#x4E3A;&#x4EC0;&#x4E48;&#x5728;&#x8FD9;&#x91CC;&#x8BB2;&#x8FD9;&#x4E24;&#x4E2A;&#x53C2;&#x6570;&#x5462;&#xFF1F;</h3>
+<p>&#x56E0;&#x4E3A;&#x6BD4;&#x8F83;&#x5B9E;&#x7528;&#xFF0C;&#x5728;&#x771F;&#x6B63;&#x5904;&#x7406;&#x5927;&#x6570;&#x636E;&#xFF08;&#x4E0D;&#x662F;&#x51E0;&#x5343;&#x4E07;&#x6570;&#x636E;&#x91CF;&#x3001;&#x51E0;&#x767E;&#x4E07;&#x6570;&#x636E;&#x91CF;&#xFF09;&#xFF0C;&#x51E0;&#x4EBF;&#xFF0C;&#x51E0;&#x5341;&#x4EBF;&#xFF0C;&#x51E0;&#x767E;&#x4EBF;&#x7684;&#x65F6;&#x5019;&#x3002;&#x5F88;&#x5BB9;&#x6613;&#x78B0;&#x5230;executor&#x5806;&#x5916;&#x5185;&#x5B58;&#xFF0C;&#x4EE5;&#x53CA;gc&#x5F15;&#x8D77;&#x7684;&#x8FDE;&#x63A5;&#x8D85;&#x65F6;&#x7684;&#x95EE;&#x9898;&#x3002;file not found&#xFF0C;executor lost&#xFF0C;task lost&#x3002;</p>
+<p>&#x8C03;&#x8282;&#x4E0A;&#x9762;&#x4E24;&#x4E2A;&#x53C2;&#x6570;&#xFF0C;&#x8FD8;&#x662F;&#x5F88;&#x6709;&#x5E2E;&#x52A9;&#x7684;&#x3002;</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="8.JVM调优之原理概述以及降低cache操作的内存占比.html" class="navigation navigation-prev " aria-label="Previous page: 8.JVM调优之原理概述以及降低cache操作的内存占比">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="10.Shuffle调优之原理概述.html" class="navigation navigation-next " aria-label="Next page: 10.Shuffle调优之原理概述">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"9.JVM调优之调节executor堆外内存与连接等待时长","level":"1.10","depth":1,"next":{"title":"10.Shuffle调优之原理概述","level":"1.11","depth":1,"path":"content/10.Shuffle调优之原理概述.md","ref":"content/10.Shuffle调优之原理概述.md","articles":[]},"previous":{"title":"8.JVM调优之原理概述以及降低cache操作的内存占比","level":"1.9","depth":1,"path":"content/8.JVM调优之原理概述以及降低cache操作的内存占比.md","ref":"content/8.JVM调优之原理概述以及降低cache操作的内存占比.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/9.JVM调优之调节executor堆外内存与连接等待时长.md","mtime":"2018-12-19T02:35:19.534Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-20T11:44:17.543Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

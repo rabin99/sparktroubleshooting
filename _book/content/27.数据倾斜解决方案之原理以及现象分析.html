@@ -1,0 +1,692 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>27.数据倾斜解决方案之原理以及现象分析 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.html" />
+    
+    
+    <link rel="prev" href="26.troubleshooting之错误的持久化方式以及checkpoint的使用.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="1.性能调优之在实际项目中分配更多资源.html">
+            
+                <a href="1.性能调优之在实际项目中分配更多资源.html">
+            
+                    
+                    1.性能调优之在实际项目中分配更多资源
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="2.性能调优之在实际项目中调节并行度.html">
+            
+                <a href="2.性能调优之在实际项目中调节并行度.html">
+            
+                    
+                    2.性能调优之在实际项目中调节并行度
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="3.性能调优之在实际项目中重构RDD架构以及RDD持久化.html">
+            
+                <a href="3.性能调优之在实际项目中重构RDD架构以及RDD持久化.html">
+            
+                    
+                    3.性能调优之在实际项目中重构RDD架构以及RDD持久化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="4.性能调优之在实际项目中广播大变量.html">
+            
+                <a href="4.性能调优之在实际项目中广播大变量.html">
+            
+                    
+                    4.性能调优之在实际项目中广播大变量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="5.性能调优之在实际项目中使用Kryo序列化.html">
+            
+                <a href="5.性能调优之在实际项目中使用Kryo序列化.html">
+            
+                    
+                    5.性能调优之在实际项目中使用Kryo序列化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="6.性能调优之在实际项目中使用fastutil优化数据格式.html">
+            
+                <a href="6.性能调优之在实际项目中使用fastutil优化数据格式.html">
+            
+                    
+                    6.性能调优之在实际项目中使用fastutil优化数据格式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="7.性能调优之在实际项目中调节数据本地化等待时长.html">
+            
+                <a href="7.性能调优之在实际项目中调节数据本地化等待时长.html">
+            
+                    
+                    7.性能调优之在实际项目中调节数据本地化等待时长
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="8.JVM调优之原理概述以及降低cache操作的内存占比.html">
+            
+                <a href="8.JVM调优之原理概述以及降低cache操作的内存占比.html">
+            
+                    
+                    8.JVM调优之原理概述以及降低cache操作的内存占比
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="9.JVM调优之调节executor堆外内存与连接等待时长.html">
+            
+                <a href="9.JVM调优之调节executor堆外内存与连接等待时长.html">
+            
+                    
+                    9.JVM调优之调节executor堆外内存与连接等待时长
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="10.Shuffle调优之原理概述.html">
+            
+                <a href="10.Shuffle调优之原理概述.html">
+            
+                    
+                    10.Shuffle调优之原理概述
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12" data-path="11.Shuffle调优之合并map端输出文件.html">
+            
+                <a href="11.Shuffle调优之合并map端输出文件.html">
+            
+                    
+                    11.Shuffle调优之合并map端输出文件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13" data-path="12.Shuffle调优之调节map端内存缓冲与reduce端内存占比.html">
+            
+                <a href="12.Shuffle调优之调节map端内存缓冲与reduce端内存占比.html">
+            
+                    
+                    12.Shuffle调优之调节map端内存缓冲与reduce端内存占比
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14" data-path="13.Shuffle调优之HashShuffleManager与SortShuffleManager.html">
+            
+                <a href="13.Shuffle调优之HashShuffleManager与SortShuffleManager.html">
+            
+                    
+                    13.Shuffle调优之HashShuffleManager与SortShuffleManager
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15" data-path="14.算子调优之MapPartitions提升Map类操作性能.html">
+            
+                <a href="14.算子调优之MapPartitions提升Map类操作性能.html">
+            
+                    
+                    14.算子调优之MapPartitions提升Map类操作性能
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.16" data-path="15.算子调优之filter过后使用coalesce减少分区数量.html">
+            
+                <a href="15.算子调优之filter过后使用coalesce减少分区数量.html">
+            
+                    
+                    15.算子调优之filter过后使用coalesce减少分区数量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.17" data-path="16.算子调优之使用foreachPartition优化写数据库性能.html">
+            
+                <a href="16.算子调优之使用foreachPartition优化写数据库性能.html">
+            
+                    
+                    16.算子调优之使用foreachPartition优化写数据库性能
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.18" data-path="17.算子调优之使用repartition解决Spark SQL低并行度的性能问题.html">
+            
+                <a href="17.算子调优之使用repartition解决Spark SQL低并行度的性能问题.html">
+            
+                    
+                    17.算子调优之使用repartition解决Spark SQL低并行度的性能问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.19" data-path="18.算子调优之reduceByKey本地聚合介绍.html">
+            
+                <a href="18.算子调优之reduceByKey本地聚合介绍.html">
+            
+                    
+                    18.算子调优之reduceByKey本地聚合介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.20" data-path="19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM.html">
+            
+                <a href="19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM.html">
+            
+                    
+                    19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.21" data-path="20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败.html">
+            
+                <a href="20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败.html">
+            
+                    
+                    20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22" data-path="21.troubleshooting之解决application因为资源不够报错.html">
+            
+                <a href="21.troubleshooting之解决application因为资源不够报错.html">
+            
+                    
+                    21.troubleshooting之解决application因为资源不够报错
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.23" data-path="22.troubleshooting之解决各种序列化导致的报错.html">
+            
+                <a href="22.troubleshooting之解决各种序列化导致的报错.html">
+            
+                    
+                    22.troubleshooting之解决各种序列化导致的报错
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.24" data-path="23.troubleshooting之解决算子函数返回NULL导致的问题.html">
+            
+                <a href="23.troubleshooting之解决算子函数返回NULL导致的问题.html">
+            
+                    
+                    23.troubleshooting之解决算子函数返回NULL导致的问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.25" data-path="24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题.html">
+            
+                <a href="24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题.html">
+            
+                    
+                    24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26" data-path="25.troubleshooting之解决yarn-cluster模式的JVM栈内存溢出问题.html">
+            
+                <a href="25.troubleshooting之解决yarn-cluster模式的JVM栈内存溢出问题.html">
+            
+                    
+                    25.troubleshooting之解决yarn-cluster模式的JVM栈内存溢出问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.27" data-path="26.troubleshooting之错误的持久化方式以及checkpoint的使用.html">
+            
+                <a href="26.troubleshooting之错误的持久化方式以及checkpoint的使用.html">
+            
+                    
+                    26.troubleshooting之错误的持久化方式以及checkpoint的使用
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.28" data-path="27.数据倾斜解决方案之原理以及现象分析.html">
+            
+                <a href="27.数据倾斜解决方案之原理以及现象分析.html">
+            
+                    
+                    27.数据倾斜解决方案之原理以及现象分析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.29" data-path="28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.html">
+            
+                <a href="28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.html">
+            
+                    
+                    28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.30" data-path="29.数据倾斜解决方案之提高shuffle操作reduce并行度.html">
+            
+                <a href="29.数据倾斜解决方案之提高shuffle操作reduce并行度.html">
+            
+                    
+                    29.数据倾斜解决方案之提高shuffle操作reduce并行度
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.31" data-path="30.数据倾斜解决方案之使用随机key实现双重聚合.html">
+            
+                <a href="30.数据倾斜解决方案之使用随机key实现双重聚合.html">
+            
+                    
+                    30.数据倾斜解决方案之使用随机key实现双重聚合
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.32" data-path="31.数据倾斜解决方案之将reduce join转换为map join.html">
+            
+                <a href="31.数据倾斜解决方案之将reduce join转换为map join.html">
+            
+                    
+                    31.数据倾斜解决方案之将reduce join转换为map join
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.33" data-path="32.数据倾斜解决方案之sample采样倾斜key单独进行join.html">
+            
+                <a href="32.数据倾斜解决方案之sample采样倾斜key单独进行join.html">
+            
+                    
+                    32.数据倾斜解决方案之sample采样倾斜key单独进行join
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.34" data-path="33.数据倾斜解决方案之使用随机数以及扩容表进行join.html">
+            
+                <a href="33.数据倾斜解决方案之使用随机数以及扩容表进行join.html">
+            
+                    
+                    33.数据倾斜解决方案之使用随机数以及扩容表进行join
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.35" data-path="34.shuffleread中的HashMap.html">
+            
+                <a href="34.shuffleread中的HashMap.html">
+            
+                    
+                    34.shuffleread中HashMap
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >27.数据倾斜解决方案之原理以及现象分析</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="27&#x6570;&#x636E;&#x503E;&#x659C;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#x4E4B;&#x539F;&#x7406;&#x4EE5;&#x53CA;&#x73B0;&#x8C61;&#x5206;&#x6790;">27.&#x6570;&#x636E;&#x503E;&#x659C;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#x4E4B;&#x539F;&#x7406;&#x4EE5;&#x53CA;&#x73B0;&#x8C61;&#x5206;&#x6790;</h1>
+<h4 id="&#x4EA7;&#x751F;&#x539F;&#x56E0;&#xFF1A;">&#x4EA7;&#x751F;&#x539F;&#x56E0;&#xFF1A;</h4>
+<p>&#x6267;&#x884C;shuffle&#x64CD;&#x4F5C;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x6570;&#x636E;&#x5206;&#x914D;&#x4E0D;&#x5747;&#x5300;</p>
+<h4 id="&#x53D1;&#x751F;&#x6570;&#x636E;&#x503E;&#x659C;&#x4EE5;&#x540E;&#x7684;&#x73B0;&#x8C61;&#xFF1A;">&#x53D1;&#x751F;&#x6570;&#x636E;&#x503E;&#x659C;&#x4EE5;&#x540E;&#x7684;&#x73B0;&#x8C61;&#xFF1A;</h4>
+<p>spark&#x6570;&#x636E;&#x503E;&#x659C;&#xFF0C;&#x6709;&#x4E24;&#x79CD;&#x8868;&#x73B0;&#xFF1A;</p>
+<p>1&#x3001;&#x4F60;&#x7684;&#x5927;&#x90E8;&#x5206;&#x7684;task&#xFF0C;&#x90FD;&#x6267;&#x884C;&#x7684;&#x7279;&#x522B;&#x7279;&#x522B;&#x5FEB;&#xFF0C;&#x5237;&#x5237;&#x5237;&#xFF0C;&#x5C31;&#x6267;&#x884C;&#x5B8C;&#x4E86;&#xFF08;&#x4F60;&#x8981;&#x7528;client&#x6A21;&#x5F0F;&#xFF0C;standalone client&#xFF0C;yarn client&#xFF0C;&#x672C;&#x5730;&#x673A;&#x5668;&#x4E3B;&#x8981;&#x4E00;&#x6267;&#x884C;spark-submit&#x811A;&#x672C;&#xFF0C;&#x5C31;&#x4F1A;&#x5F00;&#x59CB;&#x6253;&#x5370;log&#xFF09;&#xFF0C;task175 finished&#xFF1B;&#x5269;&#x4E0B;&#x51E0;&#x4E2A;task&#xFF0C;&#x6267;&#x884C;&#x7684;&#x7279;&#x522B;&#x7279;&#x522B;&#x6162;&#xFF0C;&#x524D;&#x9762;&#x7684;task&#xFF0C;&#x4E00;&#x822C;1s&#x53EF;&#x4EE5;&#x6267;&#x884C;&#x5B8C;5&#x4E2A;&#xFF1B;&#x6700;&#x540E;&#x53D1;&#x73B0;1000&#x4E2A;task&#xFF0C;998&#xFF0C;999 task&#xFF0C;&#x8981;&#x6267;&#x884C;1&#x4E2A;&#x5C0F;&#x65F6;&#xFF0C;2&#x4E2A;&#x5C0F;&#x65F6;&#x624D;&#x80FD;&#x6267;&#x884C;&#x5B8C;&#x4E00;&#x4E2A;task&#x3002;</p>
+<p>&#x51FA;&#x73B0;&#x6570;&#x636E;&#x503E;&#x659C;&#x4E86;  &#x8FD9;&#x79CD;&#x573A;&#x666F;&#x8FD8;&#x7B97;&#x597D;&#x7684;&#xFF0C;&#x975E;&#x5E38;&#x6162;&#xFF0C;&#x4F46;&#x662F;&#x81F3;&#x5C11;&#x8FD8;&#x80FD;&#x8DD1;&#x3002;  </p>
+<p>2&#x3001;&#x8FD0;&#x884C;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5176;&#x4ED6;task&#x90FD;&#x5237;&#x5237;&#x5237;&#x6267;&#x884C;&#x5B8C;&#x4E86;&#xFF0C;&#x4E5F;&#x6CA1;&#x4EC0;&#x4E48;&#x7279;&#x522B;&#x7684;&#x95EE;&#x9898;&#xFF1B;&#x4F46;&#x662F;&#x6709;&#x7684;task&#xFF0C;&#x5C31;&#x662F;&#x4F1A;&#x7A81;&#x7136;&#x95F4;&#xFF0C;&#x556A;&#xFF0C;&#x62A5;&#x4E86;&#x4E00;&#x4E2A;OOM&#xFF0C;JVM Out Of Memory&#xFF0C;&#x5185;&#x5B58;&#x6EA2;&#x51FA;&#x4E86;&#xFF0C;task failed&#xFF0C;task lost&#xFF0C;resubmitting task&#x3002;&#x53CD;&#x590D;&#x6267;&#x884C;&#x51E0;&#x6B21;&#x90FD;&#x5230;&#x4E86;&#x67D0;&#x4E2A;task&#x5C31;&#x662F;&#x8DD1;&#x4E0D;&#x901A;&#xFF0C;&#x6700;&#x540E;&#x5C31;&#x6302;&#x6389;&#x3002;  </p>
+<p>&#x67D0;&#x4E2A;task&#x5C31;&#x76F4;&#x63A5;OOM&#xFF0C;&#x90A3;&#x4E48;&#x57FA;&#x672C;&#x4E0A;&#x4E5F;&#x662F;&#x56E0;&#x4E3A;&#x6570;&#x636E;&#x503E;&#x659C;&#x4E86;&#xFF0C;task&#x5206;&#x914D;&#x7684;&#x6570;&#x91CF;&#x5B9E;&#x5728;&#x662F;&#x592A;&#x5927;&#x4E86;&#xFF01;&#xFF01;&#xFF01;&#x6240;&#x4EE5;&#x5185;&#x5B58;&#x653E;&#x4E0D;&#x4E0B;&#xFF0C;&#x7136;&#x540E;&#x4F60;&#x7684;task&#x6BCF;&#x5904;&#x7406;&#x4E00;&#x6761;&#x6570;&#x636E;&#xFF0C;&#x8FD8;&#x8981;&#x521B;&#x5EFA;&#x5927;&#x91CF;&#x7684;&#x5BF9;&#x8C61;&#x3002;&#x5185;&#x5B58;&#x7206;&#x6389;&#x4E86;&#x3002;&#x7A0B;&#x5E8F;&#x65E0;&#x6CD5;&#x6B63;&#x786E;&#x6267;&#x884C;&#x3002;  </p>
+<h4 id="&#x5B9A;&#x4F4D;&#x539F;&#x56E0;&#x4E0E;&#x51FA;&#x73B0;&#x95EE;&#x9898;&#x7684;&#x4F4D;&#x7F6E;">&#x5B9A;&#x4F4D;&#x539F;&#x56E0;&#x4E0E;&#x51FA;&#x73B0;&#x95EE;&#x9898;&#x7684;&#x4F4D;&#x7F6E;:</h4>
+<p>&#x6839;&#x636E;log&#x53BB;&#x5B9A;&#x4F4D;</p>
+<p>&#x51FA;&#x73B0;&#x6570;&#x636E;&#x503E;&#x659C;&#x7684;&#x539F;&#x56E0;&#xFF0C;&#x57FA;&#x672C;&#x53EA;&#x53EF;&#x80FD;&#x662F;&#x56E0;&#x4E3A;&#x53D1;&#x751F;&#x4E86;shuffle&#x64CD;&#x4F5C;&#xFF0C;&#x5728;shuffle&#x7684;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x51FA;&#x73B0;&#x4E86;&#x6570;&#x636E;&#x503E;&#x659C;&#x7684;&#x95EE;&#x9898;&#x3002;&#x56E0;&#x4E3A;&#x67D0;&#x4E2A;&#xFF0C;&#x6216;&#x8005;&#x67D0;&#x4E9B;key&#x5BF9;&#x5E94;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x8FDC;&#x8FDC;&#x7684;&#x9AD8;&#x4E8E;&#x5176;&#x4ED6;&#x7684;key&#x3002;</p>
+<p>1&#x3001;&#x7A0B;&#x5E8F;&#x91CC;&#x9762;&#x627E;&#x627E;&#xFF0C;&#x54EA;&#x4E9B;&#x5730;&#x65B9;&#x7528;&#x4E86;&#x4F1A;&#x4EA7;&#x751F;shuffle&#x7684;&#x7B97;&#x5B50;&#xFF0C;groupByKey&#x3001;countByKey&#x3001;reduceByKey&#x3001;join</p>
+<p>2&#x3001;&#x770B;log  </p>
+<p>log&#x4E00;&#x822C;&#x4F1A;&#x62A5;&#x662F;&#x5728;&#x4F60;&#x7684;&#x54EA;&#x4E00;&#x884C;&#x4EE3;&#x7801;&#xFF0C;&#x5BFC;&#x81F4;&#x4E86;OOM&#x5F02;&#x5E38;&#xFF1B;&#x6216;&#x8005;&#x5462;&#xFF0C;&#x770B;log&#xFF0C;&#x770B;&#x770B;&#x662F;&#x6267;&#x884C;&#x5230;&#x4E86;&#x7B2C;&#x51E0;&#x4E2A;stage&#xFF01;&#xFF01;&#xFF01;  </p>
+<p>&#x6211;&#x4EEC;&#x8FD9;&#x91CC;&#x4E0D;&#x4F1A;&#x53BB;&#x5256;&#x6790;stage&#x7684;&#x5212;&#x5206;&#x7B97;&#x6CD5;&#xFF0C;spark&#x4EE3;&#x7801;&#xFF0C;&#x662F;&#x600E;&#x4E48;&#x5212;&#x5206;&#x6210;&#x4E00;&#x4E2A;&#x4E00;&#x4E2A;&#x7684;stage&#x7684;&#x3002;&#x54EA;&#x4E00;&#x4E2A;stage&#xFF0C;task&#x7279;&#x522B;&#x6162;&#xFF0C;&#x5C31;&#x80FD;&#x591F;&#x81EA;&#x5DF1;&#x7528;&#x8089;&#x773C;&#x53BB;&#x5BF9;&#x4F60;&#x7684;spark&#x4EE3;&#x7801;&#x8FDB;&#x884C;stage&#x7684;&#x5212;&#x5206;&#xFF0C;&#x5C31;&#x80FD;&#x591F;&#x901A;&#x8FC7;stage&#x5B9A;&#x4F4D;&#x5230;&#x4F60;&#x7684;&#x4EE3;&#x7801;&#xFF0C;&#x54EA;&#x91CC;&#x53D1;&#x751F;&#x4E86;&#x6570;&#x636E;&#x503E;&#x659C;  </p>
+<p>&#x53BB;&#x627E;&#x627E;&#xFF0C;&#x4EE3;&#x7801;&#x90A3;&#x4E2A;&#x5730;&#x65B9;&#xFF0C;&#x662F;&#x54EA;&#x4E2A;shuffle&#x64CD;&#x4F5C;&#x3002;</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="26.troubleshooting之错误的持久化方式以及checkpoint的使用.html" class="navigation navigation-prev " aria-label="Previous page: 26.troubleshooting之错误的持久化方式以及checkpoint的使用">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.html" class="navigation navigation-next " aria-label="Next page: 28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"27.数据倾斜解决方案之原理以及现象分析","level":"1.28","depth":1,"next":{"title":"28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key","level":"1.29","depth":1,"path":"content/28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.md","ref":"content/28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.md","articles":[]},"previous":{"title":"26.troubleshooting之错误的持久化方式以及checkpoint的使用","level":"1.27","depth":1,"path":"content/26.troubleshooting之错误的持久化方式以及checkpoint的使用.md","ref":"content/26.troubleshooting之错误的持久化方式以及checkpoint的使用.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/27.数据倾斜解决方案之原理以及现象分析.md","mtime":"2018-12-19T09:17:54.378Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-20T11:44:17.543Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

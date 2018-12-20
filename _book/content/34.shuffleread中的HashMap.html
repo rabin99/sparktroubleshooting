@@ -1,0 +1,801 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>34.shuffleread中HashMap · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="33.数据倾斜解决方案之使用随机数以及扩容表进行join.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="1.性能调优之在实际项目中分配更多资源.html">
+            
+                <a href="1.性能调优之在实际项目中分配更多资源.html">
+            
+                    
+                    1.性能调优之在实际项目中分配更多资源
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="2.性能调优之在实际项目中调节并行度.html">
+            
+                <a href="2.性能调优之在实际项目中调节并行度.html">
+            
+                    
+                    2.性能调优之在实际项目中调节并行度
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="3.性能调优之在实际项目中重构RDD架构以及RDD持久化.html">
+            
+                <a href="3.性能调优之在实际项目中重构RDD架构以及RDD持久化.html">
+            
+                    
+                    3.性能调优之在实际项目中重构RDD架构以及RDD持久化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="4.性能调优之在实际项目中广播大变量.html">
+            
+                <a href="4.性能调优之在实际项目中广播大变量.html">
+            
+                    
+                    4.性能调优之在实际项目中广播大变量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="5.性能调优之在实际项目中使用Kryo序列化.html">
+            
+                <a href="5.性能调优之在实际项目中使用Kryo序列化.html">
+            
+                    
+                    5.性能调优之在实际项目中使用Kryo序列化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="6.性能调优之在实际项目中使用fastutil优化数据格式.html">
+            
+                <a href="6.性能调优之在实际项目中使用fastutil优化数据格式.html">
+            
+                    
+                    6.性能调优之在实际项目中使用fastutil优化数据格式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="7.性能调优之在实际项目中调节数据本地化等待时长.html">
+            
+                <a href="7.性能调优之在实际项目中调节数据本地化等待时长.html">
+            
+                    
+                    7.性能调优之在实际项目中调节数据本地化等待时长
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="8.JVM调优之原理概述以及降低cache操作的内存占比.html">
+            
+                <a href="8.JVM调优之原理概述以及降低cache操作的内存占比.html">
+            
+                    
+                    8.JVM调优之原理概述以及降低cache操作的内存占比
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="9.JVM调优之调节executor堆外内存与连接等待时长.html">
+            
+                <a href="9.JVM调优之调节executor堆外内存与连接等待时长.html">
+            
+                    
+                    9.JVM调优之调节executor堆外内存与连接等待时长
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="10.Shuffle调优之原理概述.html">
+            
+                <a href="10.Shuffle调优之原理概述.html">
+            
+                    
+                    10.Shuffle调优之原理概述
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.12" data-path="11.Shuffle调优之合并map端输出文件.html">
+            
+                <a href="11.Shuffle调优之合并map端输出文件.html">
+            
+                    
+                    11.Shuffle调优之合并map端输出文件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.13" data-path="12.Shuffle调优之调节map端内存缓冲与reduce端内存占比.html">
+            
+                <a href="12.Shuffle调优之调节map端内存缓冲与reduce端内存占比.html">
+            
+                    
+                    12.Shuffle调优之调节map端内存缓冲与reduce端内存占比
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.14" data-path="13.Shuffle调优之HashShuffleManager与SortShuffleManager.html">
+            
+                <a href="13.Shuffle调优之HashShuffleManager与SortShuffleManager.html">
+            
+                    
+                    13.Shuffle调优之HashShuffleManager与SortShuffleManager
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.15" data-path="14.算子调优之MapPartitions提升Map类操作性能.html">
+            
+                <a href="14.算子调优之MapPartitions提升Map类操作性能.html">
+            
+                    
+                    14.算子调优之MapPartitions提升Map类操作性能
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.16" data-path="15.算子调优之filter过后使用coalesce减少分区数量.html">
+            
+                <a href="15.算子调优之filter过后使用coalesce减少分区数量.html">
+            
+                    
+                    15.算子调优之filter过后使用coalesce减少分区数量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.17" data-path="16.算子调优之使用foreachPartition优化写数据库性能.html">
+            
+                <a href="16.算子调优之使用foreachPartition优化写数据库性能.html">
+            
+                    
+                    16.算子调优之使用foreachPartition优化写数据库性能
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.18" data-path="17.算子调优之使用repartition解决Spark SQL低并行度的性能问题.html">
+            
+                <a href="17.算子调优之使用repartition解决Spark SQL低并行度的性能问题.html">
+            
+                    
+                    17.算子调优之使用repartition解决Spark SQL低并行度的性能问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.19" data-path="18.算子调优之reduceByKey本地聚合介绍.html">
+            
+                <a href="18.算子调优之reduceByKey本地聚合介绍.html">
+            
+                    
+                    18.算子调优之reduceByKey本地聚合介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.20" data-path="19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM.html">
+            
+                <a href="19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM.html">
+            
+                    
+                    19.troubleshooting之控制shuffle reduce端缓冲大小以避免OOM
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.21" data-path="20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败.html">
+            
+                <a href="20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败.html">
+            
+                    
+                    20.troubleshooting之解决JVM GC导致的shuffle文件拉取失败
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.22" data-path="21.troubleshooting之解决application因为资源不够报错.html">
+            
+                <a href="21.troubleshooting之解决application因为资源不够报错.html">
+            
+                    
+                    21.troubleshooting之解决application因为资源不够报错
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.23" data-path="22.troubleshooting之解决各种序列化导致的报错.html">
+            
+                <a href="22.troubleshooting之解决各种序列化导致的报错.html">
+            
+                    
+                    22.troubleshooting之解决各种序列化导致的报错
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.24" data-path="23.troubleshooting之解决算子函数返回NULL导致的问题.html">
+            
+                <a href="23.troubleshooting之解决算子函数返回NULL导致的问题.html">
+            
+                    
+                    23.troubleshooting之解决算子函数返回NULL导致的问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.25" data-path="24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题.html">
+            
+                <a href="24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题.html">
+            
+                    
+                    24.troubleshooting之解决yarn-client模式导致的网卡流量激增问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.26" data-path="25.troubleshooting之解决yarn-cluster模式的JVM栈内存溢出问题.html">
+            
+                <a href="25.troubleshooting之解决yarn-cluster模式的JVM栈内存溢出问题.html">
+            
+                    
+                    25.troubleshooting之解决yarn-cluster模式的JVM栈内存溢出问题
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.27" data-path="26.troubleshooting之错误的持久化方式以及checkpoint的使用.html">
+            
+                <a href="26.troubleshooting之错误的持久化方式以及checkpoint的使用.html">
+            
+                    
+                    26.troubleshooting之错误的持久化方式以及checkpoint的使用
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.28" data-path="27.数据倾斜解决方案之原理以及现象分析.html">
+            
+                <a href="27.数据倾斜解决方案之原理以及现象分析.html">
+            
+                    
+                    27.数据倾斜解决方案之原理以及现象分析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.29" data-path="28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.html">
+            
+                <a href="28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key.html">
+            
+                    
+                    28.数据倾斜解决方案之聚合源数据以及过滤导致倾斜的key
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.30" data-path="29.数据倾斜解决方案之提高shuffle操作reduce并行度.html">
+            
+                <a href="29.数据倾斜解决方案之提高shuffle操作reduce并行度.html">
+            
+                    
+                    29.数据倾斜解决方案之提高shuffle操作reduce并行度
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.31" data-path="30.数据倾斜解决方案之使用随机key实现双重聚合.html">
+            
+                <a href="30.数据倾斜解决方案之使用随机key实现双重聚合.html">
+            
+                    
+                    30.数据倾斜解决方案之使用随机key实现双重聚合
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.32" data-path="31.数据倾斜解决方案之将reduce join转换为map join.html">
+            
+                <a href="31.数据倾斜解决方案之将reduce join转换为map join.html">
+            
+                    
+                    31.数据倾斜解决方案之将reduce join转换为map join
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.33" data-path="32.数据倾斜解决方案之sample采样倾斜key单独进行join.html">
+            
+                <a href="32.数据倾斜解决方案之sample采样倾斜key单独进行join.html">
+            
+                    
+                    32.数据倾斜解决方案之sample采样倾斜key单独进行join
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.34" data-path="33.数据倾斜解决方案之使用随机数以及扩容表进行join.html">
+            
+                <a href="33.数据倾斜解决方案之使用随机数以及扩容表进行join.html">
+            
+                    
+                    33.数据倾斜解决方案之使用随机数以及扩容表进行join
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.35" data-path="34.shuffleread中的HashMap.html">
+            
+                <a href="34.shuffleread中的HashMap.html">
+            
+                    
+                    34.shuffleread中HashMap
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >34.shuffleread中HashMap</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <ul>
+<li><h1 id="shuffle-&#x8FC7;&#x7A0B;">Shuffle &#x8FC7;&#x7A0B;</h1>
+<p>&#x4E0A;&#x4E00;&#x7AE0;&#x91CC;&#x8BA8;&#x8BBA;&#x4E86; job &#x7684;&#x7269;&#x7406;&#x6267;&#x884C;&#x56FE;&#xFF0C;&#x4E5F;&#x8BA8;&#x8BBA;&#x4E86;&#x6D41;&#x5165; RDD &#x4E2D;&#x7684; records &#x662F;&#x600E;&#x4E48;&#x88AB; compute() &#x540E;&#x6D41;&#x5230;&#x540E;&#x7EED; RDD &#x7684;&#xFF0C;&#x540C;&#x65F6;&#x4E5F;&#x5206;&#x6790;&#x4E86; task &#x662F;&#x600E;&#x4E48;&#x4EA7;&#x751F; result&#xFF0C;&#x4EE5;&#x53CA; result &#x600E;&#x4E48;&#x88AB;&#x6536;&#x96C6;&#x540E;&#x8BA1;&#x7B97;&#x51FA;&#x6700;&#x7EC8;&#x7ED3;&#x679C;&#x7684;&#x3002;&#x7136;&#x800C;&#xFF0C;&#x6211;&#x4EEC;&#x8FD8;&#x6CA1;&#x6709;&#x8BA8;&#x8BBA;<strong>&#x6570;&#x636E;&#x662F;&#x600E;&#x4E48;&#x901A;&#x8FC7; ShuffleDependency &#x6D41;&#x5411;&#x4E0B;&#x4E00;&#x4E2A; stage &#x7684;&#xFF1F;</strong></p>
+<h2 id="&#x5BF9;&#x6BD4;-hadoop-mapreduce-&#x548C;-spark-&#x7684;-shuffle-&#x8FC7;&#x7A0B;">&#x5BF9;&#x6BD4; Hadoop MapReduce &#x548C; Spark &#x7684; Shuffle &#x8FC7;&#x7A0B;</h2>
+<p>&#x5982;&#x679C;&#x719F;&#x6089; Hadoop MapReduce &#x4E2D;&#x7684; shuffle &#x8FC7;&#x7A0B;&#xFF0C;&#x53EF;&#x80FD;&#x4F1A;&#x6309;&#x7167; MapReduce &#x7684;&#x601D;&#x8DEF;&#x53BB;&#x60F3;&#x8C61; Spark &#x7684; shuffle &#x8FC7;&#x7A0B;&#x3002;&#x7136;&#x800C;&#xFF0C;&#x5B83;&#x4EEC;&#x4E4B;&#x95F4;&#x6709;&#x4E00;&#x4E9B;&#x533A;&#x522B;&#x548C;&#x8054;&#x7CFB;&#x3002;</p>
+<p><strong>&#x4ECE; high-level &#x7684;&#x89D2;&#x5EA6;&#x6765;&#x770B;&#xFF0C;&#x4E24;&#x8005;&#x5E76;&#x6CA1;&#x6709;&#x5927;&#x7684;&#x5DEE;&#x522B;&#x3002;</strong> &#x90FD;&#x662F;&#x5C06; mapper&#xFF08;Spark &#x91CC;&#x662F; ShuffleMapTask&#xFF09;&#x7684;&#x8F93;&#x51FA;&#x8FDB;&#x884C; partition&#xFF0C;&#x4E0D;&#x540C;&#x7684; partition &#x9001;&#x5230;&#x4E0D;&#x540C;&#x7684; reducer&#xFF08;Spark &#x91CC; reducer &#x53EF;&#x80FD;&#x662F;&#x4E0B;&#x4E00;&#x4E2A; stage &#x91CC;&#x7684; ShuffleMapTask&#xFF0C;&#x4E5F;&#x53EF;&#x80FD;&#x662F; ResultTask&#xFF09;&#x3002;Reducer &#x4EE5;&#x5185;&#x5B58;&#x4F5C;&#x7F13;&#x51B2;&#x533A;&#xFF0C;&#x8FB9; shuffle &#x8FB9; aggregate &#x6570;&#x636E;&#xFF0C;&#x7B49;&#x5230;&#x6570;&#x636E; aggregate &#x597D;&#x4EE5;&#x540E;&#x8FDB;&#x884C; reduce() &#xFF08;Spark &#x91CC;&#x53EF;&#x80FD;&#x662F;&#x540E;&#x7EED;&#x7684;&#x4E00;&#x7CFB;&#x5217;&#x64CD;&#x4F5C;&#xFF09;&#x3002;</p>
+<p><strong>&#x4ECE; low-level &#x7684;&#x89D2;&#x5EA6;&#x6765;&#x770B;&#xFF0C;&#x4E24;&#x8005;&#x5DEE;&#x522B;&#x4E0D;&#x5C0F;&#x3002;</strong> Hadoop MapReduce &#x662F; sort-based&#xFF0C;&#x8FDB;&#x5165; combine() &#x548C; reduce() &#x7684; records &#x5FC5;&#x987B;&#x5148; sort&#x3002;&#x8FD9;&#x6837;&#x7684;&#x597D;&#x5904;&#x5728;&#x4E8E; combine/reduce() &#x53EF;&#x4EE5;&#x5904;&#x7406;&#x5927;&#x89C4;&#x6A21;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x56E0;&#x4E3A;&#x5176;&#x8F93;&#x5165;&#x6570;&#x636E;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;<strong>&#x5916;&#x6392;</strong>&#x5F97;&#x5230;&#xFF08;mapper &#x5BF9;&#x6BCF;&#x6BB5;&#x6570;&#x636E;&#x5148;&#x505A;&#x6392;&#x5E8F;&#xFF0C;reducer &#x7684; shuffle &#x5BF9;&#x6392;&#x597D;&#x5E8F;&#x7684;&#x6BCF;&#x6BB5;&#x6570;&#x636E;&#x505A;&#x5F52;&#x5E76;&#xFF09;&#x3002;&#x76EE;&#x524D;&#x7684; Spark &#x9ED8;&#x8BA4;&#x9009;&#x62E9;&#x7684;&#x662F; hash-based&#xFF0C;&#x901A;&#x5E38;&#x4F7F;&#x7528; HashMap &#x6765;&#x5BF9; shuffle &#x6765;&#x7684;&#x6570;&#x636E;&#x8FDB;&#x884C; aggregate&#xFF0C;&#x4E0D;&#x4F1A;&#x5BF9;&#x6570;&#x636E;&#x8FDB;&#x884C;&#x63D0;&#x524D;&#x6392;&#x5E8F;&#x3002;&#x5982;&#x679C;&#x7528;&#x6237;&#x9700;&#x8981;&#x7ECF;&#x8FC7;&#x6392;&#x5E8F;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x90A3;&#x4E48;&#x9700;&#x8981;&#x81EA;&#x5DF1;&#x8C03;&#x7528;&#x7C7B;&#x4F3C; sortByKey() &#x7684;&#x64CD;&#x4F5C;&#xFF1B;&#x5982;&#x679C;&#x4F60;&#x662F;Spark 1.1&#x7684;&#x7528;&#x6237;&#xFF0C;&#x53EF;&#x4EE5;&#x5C06;spark.shuffle.manager&#x8BBE;&#x7F6E;&#x4E3A;sort&#xFF0C;&#x5219;&#x4F1A;&#x5BF9;&#x6570;&#x636E;&#x8FDB;&#x884C;&#x6392;&#x5E8F;&#x3002;&#x5728;Spark 1.2&#x4E2D;&#xFF0C;sort&#x5C06;&#x4F5C;&#x4E3A;&#x9ED8;&#x8BA4;&#x7684;Shuffle&#x5B9E;&#x73B0;&#x3002;</p>
+<p><strong>&#x4ECE;&#x5B9E;&#x73B0;&#x89D2;&#x5EA6;&#x6765;&#x770B;&#xFF0C;&#x4E24;&#x8005;&#x4E5F;&#x6709;&#x4E0D;&#x5C11;&#x5DEE;&#x522B;&#x3002;</strong> Hadoop MapReduce &#x5C06;&#x5904;&#x7406;&#x6D41;&#x7A0B;&#x5212;&#x5206;&#x51FA;&#x660E;&#x663E;&#x7684;&#x51E0;&#x4E2A;&#x9636;&#x6BB5;&#xFF1A;map(), spill, merge, shuffle, sort, reduce() &#x7B49;&#x3002;&#x6BCF;&#x4E2A;&#x9636;&#x6BB5;&#x5404;&#x53F8;&#x5176;&#x804C;&#xFF0C;&#x53EF;&#x4EE5;&#x6309;&#x7167;&#x8FC7;&#x7A0B;&#x5F0F;&#x7684;&#x7F16;&#x7A0B;&#x601D;&#x60F3;&#x6765;&#x9010;&#x4E00;&#x5B9E;&#x73B0;&#x6BCF;&#x4E2A;&#x9636;&#x6BB5;&#x7684;&#x529F;&#x80FD;&#x3002;&#x5728; Spark &#x4E2D;&#xFF0C;&#x6CA1;&#x6709;&#x8FD9;&#x6837;&#x529F;&#x80FD;&#x660E;&#x786E;&#x7684;&#x9636;&#x6BB5;&#xFF0C;&#x53EA;&#x6709;&#x4E0D;&#x540C;&#x7684; stage &#x548C;&#x4E00;&#x7CFB;&#x5217;&#x7684; transformation()&#xFF0C;&#x6240;&#x4EE5; spill, merge, aggregate &#x7B49;&#x64CD;&#x4F5C;&#x9700;&#x8981;&#x8574;&#x542B;&#x5728; transformation() &#x4E2D;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x6211;&#x4EEC;&#x5C06; map &#x7AEF;&#x5212;&#x5206;&#x6570;&#x636E;&#x3001;&#x6301;&#x4E45;&#x5316;&#x6570;&#x636E;&#x7684;&#x8FC7;&#x7A0B;&#x79F0;&#x4E3A; shuffle write&#xFF0C;&#x800C;&#x5C06; reducer &#x8BFB;&#x5165;&#x6570;&#x636E;&#x3001;aggregate &#x6570;&#x636E;&#x7684;&#x8FC7;&#x7A0B;&#x79F0;&#x4E3A; shuffle read&#x3002;&#x90A3;&#x4E48;&#x5728; Spark &#x4E2D;&#xFF0C;<strong>&#x95EE;&#x9898;&#x5C31;&#x53D8;&#x4E3A;&#x600E;&#x4E48;&#x5728; job &#x7684;&#x903B;&#x8F91;&#x6216;&#x8005;&#x7269;&#x7406;&#x6267;&#x884C;&#x56FE;&#x4E2D;&#x52A0;&#x5165; shuffle write &#x548C; shuffle read &#x7684;&#x5904;&#x7406;&#x903B;&#x8F91;&#xFF1F;&#x4EE5;&#x53CA;&#x4E24;&#x4E2A;&#x5904;&#x7406;&#x903B;&#x8F91;&#x5E94;&#x8BE5;&#x600E;&#x4E48;&#x9AD8;&#x6548;&#x5B9E;&#x73B0;&#xFF1F;</strong></p>
+<h2 id="shuffle-write">Shuffle write</h2>
+<p>&#x7531;&#x4E8E;&#x4E0D;&#x8981;&#x6C42;&#x6570;&#x636E;&#x6709;&#x5E8F;&#xFF0C;shuffle write &#x7684;&#x4EFB;&#x52A1;&#x5F88;&#x7B80;&#x5355;&#xFF1A;&#x5C06;&#x6570;&#x636E; partition &#x597D;&#xFF0C;&#x5E76;&#x6301;&#x4E45;&#x5316;&#x3002;&#x4E4B;&#x6240;&#x4EE5;&#x8981;&#x6301;&#x4E45;&#x5316;&#xFF0C;&#x4E00;&#x65B9;&#x9762;&#x662F;&#x8981;&#x51CF;&#x5C11;&#x5185;&#x5B58;&#x5B58;&#x50A8;&#x7A7A;&#x95F4;&#x538B;&#x529B;&#xFF0C;&#x53E6;&#x4E00;&#x65B9;&#x9762;&#x4E5F;&#x662F;&#x4E3A;&#x4E86; fault-tolerance&#x3002;</p>
+<p>shuffle write &#x7684;&#x4EFB;&#x52A1;&#x5F88;&#x7B80;&#x5355;&#xFF0C;&#x90A3;&#x4E48;&#x5B9E;&#x73B0;&#x4E5F;&#x5F88;&#x7B80;&#x5355;&#xFF1A;&#x5C06; shuffle write &#x7684;&#x5904;&#x7406;&#x903B;&#x8F91;&#x52A0;&#x5165;&#x5230; ShuffleMapStage&#xFF08;ShuffleMapTask &#x6240;&#x5728;&#x7684; stage&#xFF09; &#x7684;&#x6700;&#x540E;&#xFF0C;&#x8BE5; stage &#x7684; final RDD &#x6BCF;&#x8F93;&#x51FA;&#x4E00;&#x4E2A; record &#x5C31;&#x5C06;&#x5176; partition &#x5E76;&#x6301;&#x4E45;&#x5316;&#x3002;&#x56FE;&#x793A;&#x5982;&#x4E0B;&#xFF1A;</p>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/shuffle-write-no-consolidation.png" target="_blank"><img src="assets/shuffle-write-no-consolidation.png" alt="shuffle-write-no-consolidation"></a></p>
+<p>&#x4E0A;&#x56FE;&#x6709; 4 &#x4E2A; ShuffleMapTask &#x8981;&#x5728;&#x540C;&#x4E00;&#x4E2A; worker node &#x4E0A;&#x8FD0;&#x884C;&#xFF0C;CPU core &#x6570;&#x4E3A; 2&#xFF0C;&#x53EF;&#x4EE5;&#x540C;&#x65F6;&#x8FD0;&#x884C;&#x4E24;&#x4E2A; task&#x3002;&#x6BCF;&#x4E2A; task &#x7684;&#x6267;&#x884C;&#x7ED3;&#x679C;&#xFF08;&#x8BE5; stage &#x7684; finalRDD &#x4E2D;&#x67D0;&#x4E2A; partition &#x5305;&#x542B;&#x7684; records&#xFF09;&#x88AB;&#x9010;&#x4E00;&#x5199;&#x5230;&#x672C;&#x5730;&#x78C1;&#x76D8;&#x4E0A;&#x3002;&#x6BCF;&#x4E2A; task &#x5305;&#x542B; R &#x4E2A;&#x7F13;&#x51B2;&#x533A;&#xFF0C;R = reducer &#x4E2A;&#x6570;&#xFF08;&#x4E5F;&#x5C31;&#x662F;&#x4E0B;&#x4E00;&#x4E2A; stage &#x4E2D; task &#x7684;&#x4E2A;&#x6570;&#xFF09;&#xFF0C;&#x7F13;&#x51B2;&#x533A;&#x88AB;&#x79F0;&#x4E3A; bucket&#xFF0C;&#x5176;&#x5927;&#x5C0F;&#x4E3A;<code>spark.shuffle.file.buffer.kb</code> &#xFF0C;&#x9ED8;&#x8BA4;&#x662F; 32KB&#xFF08;Spark 1.1 &#x7248;&#x672C;&#x4EE5;&#x524D;&#x662F; 100KB&#xFF09;&#x3002;</p>
+<blockquote>
+<p>&#x5176;&#x5B9E; bucket &#x662F;&#x4E00;&#x4E2A;&#x5E7F;&#x4E49;&#x7684;&#x6982;&#x5FF5;&#xFF0C;&#x4EE3;&#x8868; ShuffleMapTask &#x8F93;&#x51FA;&#x7ED3;&#x679C;&#x7ECF;&#x8FC7; partition &#x540E;&#x8981;&#x5B58;&#x653E;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x8FD9;&#x91CC;&#x4E3A;&#x4E86;&#x7EC6;&#x5316;&#x6570;&#x636E;&#x5B58;&#x653E;&#x4F4D;&#x7F6E;&#x548C;&#x6570;&#x636E;&#x540D;&#x79F0;&#xFF0C;&#x4EC5;&#x4EC5;&#x7528; bucket &#x8868;&#x793A;&#x7F13;&#x51B2;&#x533A;&#x3002;</p>
+</blockquote>
+<p>ShuffleMapTask &#x7684;&#x6267;&#x884C;&#x8FC7;&#x7A0B;&#x5F88;&#x7B80;&#x5355;&#xFF1A;&#x5148;&#x5229;&#x7528; pipeline &#x8BA1;&#x7B97;&#x5F97;&#x5230; finalRDD &#x4E2D;&#x5BF9;&#x5E94; partition &#x7684; records&#x3002;&#x6BCF;&#x5F97;&#x5230;&#x4E00;&#x4E2A; record &#x5C31;&#x5C06;&#x5176;&#x9001;&#x5230;&#x5BF9;&#x5E94;&#x7684; bucket &#x91CC;&#xFF0C;&#x5177;&#x4F53;&#x662F;&#x54EA;&#x4E2A; bucket &#x7531;<code>partitioner.partition(record.getKey()))</code>&#x51B3;&#x5B9A;&#x3002;&#x6BCF;&#x4E2A; bucket &#x91CC;&#x9762;&#x7684;&#x6570;&#x636E;&#x4F1A;&#x4E0D;&#x65AD;&#x88AB;&#x5199;&#x5230;&#x672C;&#x5730;&#x78C1;&#x76D8;&#x4E0A;&#xFF0C;&#x5F62;&#x6210;&#x4E00;&#x4E2A; ShuffleBlockFile&#xFF0C;&#x6216;&#x8005;&#x7B80;&#x79F0; <strong>FileSegment</strong>&#x3002;&#x4E4B;&#x540E;&#x7684; reducer &#x4F1A;&#x53BB; fetch &#x5C5E;&#x4E8E;&#x81EA;&#x5DF1;&#x7684; FileSegment&#xFF0C;&#x8FDB;&#x5165; shuffle read &#x9636;&#x6BB5;&#x3002;</p>
+<p>&#x8FD9;&#x6837;&#x7684;&#x5B9E;&#x73B0;&#x5F88;&#x7B80;&#x5355;&#xFF0C;&#x4F46;&#x6709;&#x51E0;&#x4E2A;&#x95EE;&#x9898;&#xFF1A;</p>
+<ol>
+<li><strong>&#x4EA7;&#x751F;&#x7684; FileSegment &#x8FC7;&#x591A;&#x3002;</strong>&#x6BCF;&#x4E2A; ShuffleMapTask &#x4EA7;&#x751F; R&#xFF08;reducer &#x4E2A;&#x6570;&#xFF09;&#x4E2A; FileSegment&#xFF0C;M &#x4E2A; ShuffleMapTask &#x5C31;&#x4F1A;&#x4EA7;&#x751F; M * R &#x4E2A;&#x6587;&#x4EF6;&#x3002;&#x4E00;&#x822C; Spark job &#x7684; M &#x548C; R &#x90FD;&#x5F88;&#x5927;&#xFF0C;&#x56E0;&#x6B64;&#x78C1;&#x76D8;&#x4E0A;&#x4F1A;&#x5B58;&#x5728;&#x5927;&#x91CF;&#x7684;&#x6570;&#x636E;&#x6587;&#x4EF6;&#x3002;</li>
+<li><strong>&#x7F13;&#x51B2;&#x533A;&#x5360;&#x7528;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#x5927;&#x3002;</strong>&#x6BCF;&#x4E2A; ShuffleMapTask &#x9700;&#x8981;&#x5F00; R &#x4E2A; bucket&#xFF0C;M &#x4E2A; ShuffleMapTask &#x5C31;&#x4F1A;&#x4EA7;&#x751F; M <em> R &#x4E2A; bucket&#x3002;&#x867D;&#x7136;&#x4E00;&#x4E2A; ShuffleMapTask &#x7ED3;&#x675F;&#x540E;&#xFF0C;&#x5BF9;&#x5E94;&#x7684;&#x7F13;&#x51B2;&#x533A;&#x53EF;&#x4EE5;&#x88AB;&#x56DE;&#x6536;&#xFF0C;&#x4F46;&#x4E00;&#x4E2A; worker node &#x4E0A;&#x540C;&#x65F6;&#x5B58;&#x5728;&#x7684; bucket &#x4E2A;&#x6570;&#x53EF;&#x4EE5;&#x8FBE;&#x5230; cores </em> R &#x4E2A;&#xFF08;&#x4E00;&#x822C; worker &#x540C;&#x65F6;&#x53EF;&#x4EE5;&#x8FD0;&#x884C; cores &#x4E2A; ShuffleMapTask&#xFF09;&#xFF0C;&#x5360;&#x7528;&#x7684;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#x4E5F;&#x5C31;&#x8FBE;&#x5230;&#x4E86;<code>cores * R * 32 KB</code>&#x3002;&#x5BF9;&#x4E8E; 8 &#x6838; 1000 &#x4E2A; reducer &#x6765;&#x8BF4;&#xFF0C;&#x5360;&#x7528;&#x5185;&#x5B58;&#x5C31;&#x662F; 256MB&#x3002;</li>
+</ol>
+<p>&#x76EE;&#x524D;&#x6765;&#x770B;&#xFF0C;&#x7B2C;&#x4E8C;&#x4E2A;&#x95EE;&#x9898;&#x8FD8;&#x6CA1;&#x6709;&#x597D;&#x7684;&#x65B9;&#x6CD5;&#x89E3;&#x51B3;&#xFF0C;&#x56E0;&#x4E3A;&#x5199;&#x78C1;&#x76D8;&#x7EC8;&#x7A76;&#x662F;&#x8981;&#x5F00;&#x7F13;&#x51B2;&#x533A;&#x7684;&#xFF0C;&#x7F13;&#x51B2;&#x533A;&#x592A;&#x5C0F;&#x4F1A;&#x5F71;&#x54CD; IO &#x901F;&#x5EA6;&#x3002;&#x4F46;&#x7B2C;&#x4E00;&#x4E2A;&#x95EE;&#x9898;&#x6709;&#x4E00;&#x4E9B;&#x65B9;&#x6CD5;&#x53BB;&#x89E3;&#x51B3;&#xFF0C;&#x4E0B;&#x9762;&#x4ECB;&#x7ECD;&#x5DF2;&#x7ECF;&#x5728; Spark &#x91CC;&#x9762;&#x5B9E;&#x73B0;&#x7684; FileConsolidation &#x65B9;&#x6CD5;&#x3002;&#x5148;&#x4E0A;&#x56FE;&#xFF1A;</p>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/shuffle-write-consolidation.png" target="_blank"><img src="assets/shuffle-write-consolidation.png" alt="shuffle-write-consolidation"></a></p>
+<p>&#x53EF;&#x4EE5;&#x660E;&#x663E;&#x770B;&#x51FA;&#xFF0C;&#x5728;&#x4E00;&#x4E2A; core &#x4E0A;&#x8FDE;&#x7EED;&#x6267;&#x884C;&#x7684; ShuffleMapTasks &#x53EF;&#x4EE5;&#x5171;&#x7528;&#x4E00;&#x4E2A;&#x8F93;&#x51FA;&#x6587;&#x4EF6; ShuffleFile&#x3002;&#x5148;&#x6267;&#x884C;&#x5B8C;&#x7684; ShuffleMapTask &#x5F62;&#x6210; ShuffleBlock i&#xFF0C;&#x540E;&#x6267;&#x884C;&#x7684; ShuffleMapTask &#x53EF;&#x4EE5;&#x5C06;&#x8F93;&#x51FA;&#x6570;&#x636E;&#x76F4;&#x63A5;&#x8FFD;&#x52A0;&#x5230; ShuffleBlock i &#x540E;&#x9762;&#xFF0C;&#x5F62;&#x6210; ShuffleBlock i&apos;&#xFF0C;&#x6BCF;&#x4E2A; ShuffleBlock &#x88AB;&#x79F0;&#x4E3A; <strong>FileSegment</strong>&#x3002;&#x4E0B;&#x4E00;&#x4E2A; stage &#x7684; reducer &#x53EA;&#x9700;&#x8981; fetch &#x6574;&#x4E2A; ShuffleFile &#x5C31;&#x884C;&#x4E86;&#x3002;&#x8FD9;&#x6837;&#xFF0C;&#x6BCF;&#x4E2A; worker &#x6301;&#x6709;&#x7684;&#x6587;&#x4EF6;&#x6570;&#x964D;&#x4E3A; cores * R&#x3002;FileConsolidation &#x529F;&#x80FD;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;<code>spark.shuffle.consolidateFiles=true</code>&#x6765;&#x5F00;&#x542F;&#x3002;</p>
+<h2 id="shuffle-read">Shuffle read</h2>
+<p>&#x5148;&#x770B;&#x4E00;&#x5F20;&#x5305;&#x542B; ShuffleDependency &#x7684;&#x7269;&#x7406;&#x6267;&#x884C;&#x56FE;&#xFF0C;&#x6765;&#x81EA; reduceByKey&#xFF1A;</p>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/reduceByKeyStage.png" target="_blank"><img src="assets/reduceByKeyStage.png" alt="reduceByKey"></a></p>
+<p>&#x5F88;&#x81EA;&#x7136;&#x5730;&#xFF0C;&#x8981;&#x8BA1;&#x7B97; ShuffleRDD &#x4E2D;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x5FC5;&#x987B;&#x5148;&#x628A; MapPartitionsRDD &#x4E2D;&#x7684;&#x6570;&#x636E; fetch &#x8FC7;&#x6765;&#x3002;&#x90A3;&#x4E48;&#x95EE;&#x9898;&#x5C31;&#x6765;&#x4E86;&#xFF1A;</p>
+<ul>
+<li>&#x5728;&#x4EC0;&#x4E48;&#x65F6;&#x5019; fetch&#xFF0C;parent stage &#x4E2D;&#x7684;&#x4E00;&#x4E2A; ShuffleMapTask &#x6267;&#x884C;&#x5B8C;&#x8FD8;&#x662F;&#x7B49;&#x5168;&#x90E8; ShuffleMapTasks &#x6267;&#x884C;&#x5B8C;&#xFF1F;</li>
+<li>&#x8FB9; fetch &#x8FB9;&#x5904;&#x7406;&#x8FD8;&#x662F;&#x4E00;&#x6B21;&#x6027; fetch &#x5B8C;&#x518D;&#x5904;&#x7406;&#xFF1F;</li>
+<li>fetch &#x6765;&#x7684;&#x6570;&#x636E;&#x5B58;&#x653E;&#x5230;&#x54EA;&#x91CC;&#xFF1F;</li>
+<li>&#x600E;&#x4E48;&#x83B7;&#x5F97;&#x8981; fetch &#x7684;&#x6570;&#x636E;&#x7684;&#x5B58;&#x653E;&#x4F4D;&#x7F6E;&#xFF1F;</li>
+</ul>
+<p>&#x89E3;&#x51B3;&#x95EE;&#x9898;&#xFF1A;</p>
+<ul>
+<li><p><strong>&#x5728;&#x4EC0;&#x4E48;&#x65F6;&#x5019; fetch&#xFF1F;</strong>&#x5F53; parent stage &#x7684;&#x6240;&#x6709; ShuffleMapTasks &#x7ED3;&#x675F;&#x540E;&#x518D; fetch&#x3002;&#x7406;&#x8BBA;&#x4E0A;&#x8BB2;&#xFF0C;&#x4E00;&#x4E2A; ShuffleMapTask &#x7ED3;&#x675F;&#x540E;&#x5C31;&#x53EF;&#x4EE5; fetch&#xFF0C;&#x4F46;&#x662F;&#x4E3A;&#x4E86;&#x8FCE;&#x5408; stage &#x7684;&#x6982;&#x5FF5;&#xFF08;&#x5373;&#x4E00;&#x4E2A; stage &#x5982;&#x679C;&#x5176; parent stages &#x6CA1;&#x6709;&#x6267;&#x884C;&#x5B8C;&#xFF0C;&#x81EA;&#x5DF1;&#x662F;&#x4E0D;&#x80FD;&#x88AB;&#x63D0;&#x4EA4;&#x6267;&#x884C;&#x7684;&#xFF09;&#xFF0C;&#x8FD8;&#x662F;&#x9009;&#x62E9;&#x5168;&#x90E8; ShuffleMapTasks &#x6267;&#x884C;&#x5B8C;&#x518D;&#x53BB; fetch&#x3002;&#x56E0;&#x4E3A; fetch &#x6765;&#x7684; FileSegments &#x8981;&#x5148;&#x5728;&#x5185;&#x5B58;&#x505A;&#x7F13;&#x51B2;&#xFF0C;&#x6240;&#x4EE5;&#x4E00;&#x6B21; fetch &#x7684; FileSegments &#x603B;&#x5927;&#x5C0F;&#x4E0D;&#x80FD;&#x592A;&#x5927;&#x3002;Spark &#x89C4;&#x5B9A;&#x8FD9;&#x4E2A;&#x7F13;&#x51B2;&#x754C;&#x9650;&#x4E0D;&#x80FD;&#x8D85;&#x8FC7; <code>spark.reducer.maxMbInFlight</code>&#xFF0C;&#x8FD9;&#x91CC;&#x7528; <strong>softBuffer</strong> &#x8868;&#x793A;&#xFF0C;&#x9ED8;&#x8BA4;&#x5927;&#x5C0F;&#x4E3A; 48MB&#x3002;&#x4E00;&#x4E2A; softBuffer &#x91CC;&#x9762;&#x4E00;&#x822C;&#x5305;&#x542B;&#x591A;&#x4E2A; FileSegment&#xFF0C;&#x4F46;&#x5982;&#x679C;&#x67D0;&#x4E2A; FileSegment &#x7279;&#x522B;&#x5927;&#x7684;&#x8BDD;&#xFF0C;&#x8FD9;&#x4E00;&#x4E2A;&#x5C31;&#x53EF;&#x4EE5;&#x586B;&#x6EE1;&#x751A;&#x81F3;&#x8D85;&#x8FC7; softBuffer &#x7684;&#x754C;&#x9650;&#x3002;</p>
+</li>
+<li><p><strong>&#x8FB9; fetch &#x8FB9;&#x5904;&#x7406;&#x8FD8;&#x662F;&#x4E00;&#x6B21;&#x6027; fetch &#x5B8C;&#x518D;&#x5904;&#x7406;&#xFF1F;</strong>&#x8FB9; fetch &#x8FB9;&#x5904;&#x7406;&#x3002;&#x672C;&#x8D28;&#x4E0A;&#xFF0C;MapReduce shuffle &#x9636;&#x6BB5;&#x5C31;&#x662F;&#x8FB9; fetch &#x8FB9;&#x4F7F;&#x7528; combine() &#x8FDB;&#x884C;&#x5904;&#x7406;&#xFF0C;&#x53EA;&#x662F; combine() &#x5904;&#x7406;&#x7684;&#x662F;&#x90E8;&#x5206;&#x6570;&#x636E;&#x3002;MapReduce &#x4E3A;&#x4E86;&#x8BA9;&#x8FDB;&#x5165; reduce() &#x7684; records &#x6709;&#x5E8F;&#xFF0C;&#x5FC5;&#x987B;&#x7B49;&#x5230;&#x5168;&#x90E8;&#x6570;&#x636E;&#x90FD; shuffle-sort &#x540E;&#x518D;&#x5F00;&#x59CB; reduce()&#x3002;&#x56E0;&#x4E3A; Spark &#x4E0D;&#x8981;&#x6C42; shuffle &#x540E;&#x7684;&#x6570;&#x636E;&#x5168;&#x5C40;&#x6709;&#x5E8F;&#xFF0C;&#x56E0;&#x6B64;&#x6CA1;&#x5FC5;&#x8981;&#x7B49;&#x5230;&#x5168;&#x90E8;&#x6570;&#x636E; shuffle &#x5B8C;&#x6210;&#x540E;&#x518D;&#x5904;&#x7406;&#x3002;<strong>&#x90A3;&#x4E48;&#x5982;&#x4F55;&#x5B9E;&#x73B0;&#x8FB9; shuffle &#x8FB9;&#x5904;&#x7406;&#xFF0C;&#x800C;&#x4E14;&#x6D41;&#x5165;&#x7684; records &#x662F;&#x65E0;&#x5E8F;&#x7684;&#xFF1F;</strong>&#x7B54;&#x6848;&#x662F;&#x4F7F;&#x7528;&#x53EF;&#x4EE5; aggregate &#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#xFF0C;&#x6BD4;&#x5982; HashMap&#x3002;&#x6BCF; shuffle &#x5F97;&#x5230;&#xFF08;&#x4ECE;&#x7F13;&#x51B2;&#x7684; FileSegment &#x4E2D; deserialize &#x51FA;&#x6765;&#xFF09;&#x4E00;&#x4E2A; <key, value=""> record&#xFF0C;&#x76F4;&#x63A5;&#x5C06;&#x5176;&#x653E;&#x8FDB; HashMap &#x91CC;&#x9762;&#x3002;&#x5982;&#x679C;&#x8BE5; HashMap &#x5DF2;&#x7ECF;&#x5B58;&#x5728;&#x76F8;&#x5E94;&#x7684; Key&#xFF0C;&#x90A3;&#x4E48;&#x76F4;&#x63A5;&#x8FDB;&#x884C; aggregate &#x4E5F;&#x5C31;&#x662F; <code>func(hashMap.get(Key), Value)</code>&#xFF0C;&#x6BD4;&#x5982;&#x4E0A;&#x9762; WordCount &#x4F8B;&#x5B50;&#x4E2D;&#x7684; func &#x5C31;&#x662F; <code>hashMap.get(Key) &#xFF0B; Value</code>&#xFF0C;&#x5E76;&#x5C06; func &#x7684;&#x7ED3;&#x679C;&#x91CD;&#x65B0; put(key) &#x5230; HashMap &#x4E2D;&#x53BB;&#x3002;&#x8FD9;&#x4E2A; func &#x529F;&#x80FD;&#x4E0A;&#x76F8;&#x5F53;&#x4E8E; reduce()&#xFF0C;&#x4F46;&#x5B9E;&#x9645;&#x5904;&#x7406;&#x6570;&#x636E;&#x7684;&#x65B9;&#x5F0F;&#x4E0E; MapReduce reduce() &#x6709;&#x5DEE;&#x522B;&#xFF0C;&#x5DEE;&#x522B;&#x76F8;&#x5F53;&#x4E8E;&#x4E0B;&#x9762;&#x4E24;&#x6BB5;&#x7A0B;&#x5E8F;&#x7684;&#x5DEE;&#x522B;&#x3002;</key,></p>
+<pre><code> // MapReduce
+ reduce(K key, Iterable&lt;V&gt; values) { 
+     result = process(key, values)
+     return result    
+ }
+
+ // Spark
+ reduce(K key, Iterable&lt;V&gt; values) {
+     result = null 
+     for (V value : values) 
+         result  = func(result, value)
+     return result
+ }
+</code></pre></li>
+</ul>
+<p>MapReduce &#x53EF;&#x4EE5;&#x5728; process &#x51FD;&#x6570;&#x91CC;&#x9762;&#x53EF;&#x4EE5;&#x5B9A;&#x4E49;&#x4EFB;&#x4F55;&#x6570;&#x636E;&#x7ED3;&#x6784;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x5C06;&#x90E8;&#x5206;&#x6216;&#x5168;&#x90E8;&#x7684; values &#x90FD; cache &#x540E;&#x518D;&#x8FDB;&#x884C;&#x5904;&#x7406;&#xFF0C;&#x975E;&#x5E38;&#x7075;&#x6D3B;&#x3002;&#x800C; Spark &#x4E2D;&#x7684; func &#x7684;&#x8F93;&#x5165;&#x53C2;&#x6570;&#x662F;&#x56FA;&#x5B9A;&#x7684;&#xFF0C;&#x4E00;&#x4E2A;&#x662F;&#x4E0A;&#x4E00;&#x4E2A; record &#x7684;&#x5904;&#x7406;&#x7ED3;&#x679C;&#xFF0C;&#x53E6;&#x4E00;&#x4E2A;&#x662F;&#x5F53;&#x524D;&#x8BFB;&#x5165;&#x7684; record&#xFF0C;&#x5B83;&#x4EEC;&#x7ECF;&#x8FC7; func &#x5904;&#x7406;&#x540E;&#x7684;&#x7ED3;&#x679C;&#x88AB;&#x4E0B;&#x4E00;&#x4E2A; record &#x5904;&#x7406;&#x65F6;&#x4F7F;&#x7528;&#x3002;&#x56E0;&#x6B64;&#x4E00;&#x4E9B;&#x7B97;&#x6CD5;&#x6BD4;&#x5982;&#x6C42;&#x5E73;&#x5747;&#x6570;&#xFF0C;&#x5728; process &#x91CC;&#x9762;&#x5F88;&#x597D;&#x5B9E;&#x73B0;&#xFF0C;&#x76F4;&#x63A5;<code>sum(values)/values.length</code>&#xFF0C;&#x800C;&#x5728; Spark &#x4E2D; func &#x53EF;&#x4EE5;&#x5B9E;&#x73B0;<code>sum(values)</code>&#xFF0C;&#x4F46;&#x4E0D;&#x597D;&#x5B9E;&#x73B0;<code>/values.length</code>&#x3002;&#x66F4;&#x591A;&#x7684; func &#x5C06;&#x4F1A;&#x5728;&#x4E0B;&#x9762;&#x7684;&#x7AE0;&#x8282;&#x7EC6;&#x81F4;&#x5206;&#x6790;&#x3002;</p>
+<ul>
+<li><strong>fetch &#x6765;&#x7684;&#x6570;&#x636E;&#x5B58;&#x653E;&#x5230;&#x54EA;&#x91CC;&#xFF1F;</strong>&#x521A; fetch &#x6765;&#x7684; FileSegment &#x5B58;&#x653E;&#x5728; softBuffer &#x7F13;&#x51B2;&#x533A;&#xFF0C;&#x7ECF;&#x8FC7;&#x5904;&#x7406;&#x540E;&#x7684;&#x6570;&#x636E;&#x653E;&#x5728;&#x5185;&#x5B58; + &#x78C1;&#x76D8;&#x4E0A;&#x3002;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x4E3B;&#x8981;&#x8BA8;&#x8BBA;&#x5904;&#x7406;&#x540E;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x53EF;&#x4EE5;&#x7075;&#x6D3B;&#x8BBE;&#x7F6E;&#x8FD9;&#x4E9B;&#x6570;&#x636E;&#x662F;&#x201C;&#x53EA;&#x7528;&#x5185;&#x5B58;&#x201D;&#x8FD8;&#x662F;&#x201C;&#x5185;&#x5B58;&#xFF0B;&#x78C1;&#x76D8;&#x201D;&#x3002;&#x5982;&#x679C;<code>spark.shuffle.spill = false</code>&#x5C31;&#x53EA;&#x7528;&#x5185;&#x5B58;&#x3002;&#x5185;&#x5B58;&#x4F7F;&#x7528;&#x7684;&#x662F;<code>AppendOnlyMap</code> &#xFF0C;&#x7C7B;&#x4F3C; Java &#x7684;<code>HashMap</code>&#xFF0C;&#x5185;&#x5B58;&#xFF0B;&#x78C1;&#x76D8;&#x4F7F;&#x7528;&#x7684;&#x662F;<code>ExternalAppendOnlyMap</code>&#xFF0C;&#x5982;&#x679C;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#x4E0D;&#x8DB3;&#x65F6;&#xFF0C;<code>ExternalAppendOnlyMap</code>&#x53EF;&#x4EE5;&#x5C06; <k, v=""> records &#x8FDB;&#x884C; sort &#x540E; spill &#x5230;&#x78C1;&#x76D8;&#x4E0A;&#xFF0C;&#x7B49;&#x5230;&#x9700;&#x8981;&#x5B83;&#x4EEC;&#x7684;&#x65F6;&#x5019;&#x518D;&#x8FDB;&#x884C;&#x5F52;&#x5E76;&#xFF0C;&#x540E;&#x9762;&#x4F1A;&#x8BE6;&#x89E3;&#x3002;<strong>&#x4F7F;&#x7528;&#x201C;&#x5185;&#x5B58;&#xFF0B;&#x78C1;&#x76D8;&#x201D;&#x7684;&#x4E00;&#x4E2A;&#x4E3B;&#x8981;&#x95EE;&#x9898;&#x5C31;&#x662F;&#x5982;&#x4F55;&#x5728;&#x4E24;&#x8005;&#x4E4B;&#x95F4;&#x53D6;&#x5F97;&#x5E73;&#x8861;&#xFF1F;</strong>&#x5728; Hadoop MapReduce &#x4E2D;&#xFF0C;&#x9ED8;&#x8BA4;&#x5C06; reducer &#x7684; 70% &#x7684;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#x7528;&#x4E8E;&#x5B58;&#x653E; shuffle &#x6765;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x7B49;&#x5230;&#x8FD9;&#x4E2A;&#x7A7A;&#x95F4;&#x5229;&#x7528;&#x7387;&#x8FBE;&#x5230; 66% &#x7684;&#x65F6;&#x5019;&#x5C31;&#x5F00;&#x59CB; merge-combine()-spill&#x3002;&#x5728; Spark &#x4E2D;&#xFF0C;&#x4E5F;&#x9002;&#x7528;&#x540C;&#x6837;&#x7684;&#x7B56;&#x7565;&#xFF0C;&#x4E00;&#x65E6; ExternalAppendOnlyMap &#x8FBE;&#x5230;&#x4E00;&#x4E2A;&#x9608;&#x503C;&#x5C31;&#x5F00;&#x59CB; spill&#xFF0C;&#x5177;&#x4F53;&#x7EC6;&#x8282;&#x4E0B;&#x9762;&#x4F1A;&#x8BA8;&#x8BBA;&#x3002;</k,></li>
+<li><strong>&#x600E;&#x4E48;&#x83B7;&#x5F97;&#x8981; fetch &#x7684;&#x6570;&#x636E;&#x7684;&#x5B58;&#x653E;&#x4F4D;&#x7F6E;&#xFF1F;</strong>&#x5728;&#x4E0A;&#x4E00;&#x7AE0;&#x8BA8;&#x8BBA;&#x7269;&#x7406;&#x6267;&#x884C;&#x56FE;&#x4E2D;&#x7684; stage &#x5212;&#x5206;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x6211;&#x4EEC;&#x5F3A;&#x8C03; &#x201C;&#x4E00;&#x4E2A; ShuffleMapStage &#x5F62;&#x6210;&#x540E;&#xFF0C;&#x4F1A;&#x5C06;&#x8BE5; stage &#x6700;&#x540E;&#x4E00;&#x4E2A; final RDD &#x6CE8;&#x518C;&#x5230; <code>MapOutputTrackerMaster.registerShuffle(shuffleId, rdd.partitions.size)</code>&#xFF0C;&#x8FD9;&#x4E00;&#x6B65;&#x5F88;&#x91CD;&#x8981;&#xFF0C;&#x56E0;&#x4E3A; shuffle &#x8FC7;&#x7A0B;&#x9700;&#x8981; MapOutputTrackerMaster &#x6765;&#x6307;&#x793A; ShuffleMapTask &#x8F93;&#x51FA;&#x6570;&#x636E;&#x7684;&#x4F4D;&#x7F6E;&#x201D;&#x3002;&#x56E0;&#x6B64;&#xFF0C;reducer &#x5728; shuffle &#x7684;&#x65F6;&#x5019;&#x662F;&#x8981;&#x53BB; driver &#x91CC;&#x9762;&#x7684; MapOutputTrackerMaster &#x8BE2;&#x95EE; ShuffleMapTask &#x8F93;&#x51FA;&#x7684;&#x6570;&#x636E;&#x4F4D;&#x7F6E;&#x7684;&#x3002;&#x6BCF;&#x4E2A; ShuffleMapTask &#x5B8C;&#x6210;&#x65F6;&#x4F1A;&#x5C06; FileSegment &#x7684;&#x5B58;&#x50A8;&#x4F4D;&#x7F6E;&#x4FE1;&#x606F;&#x6C47;&#x62A5;&#x7ED9; MapOutputTrackerMaster&#x3002;</li>
+</ul>
+<p>&#x81F3;&#x6B64;&#xFF0C;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x8BA8;&#x8BBA;&#x4E86; shuffle write &#x548C; shuffle read &#x8BBE;&#x8BA1;&#x7684;&#x6838;&#x5FC3;&#x601D;&#x60F3;&#x3001;&#x7B97;&#x6CD5;&#x53CA;&#x67D0;&#x4E9B;&#x5B9E;&#x73B0;&#x3002;&#x63A5;&#x4E0B;&#x6765;&#xFF0C;&#x6211;&#x4EEC;&#x6DF1;&#x5165;&#x4E00;&#x4E9B;&#x7EC6;&#x8282;&#x6765;&#x8BA8;&#x8BBA;&#x3002;</p>
+<h2 id="&#x5178;&#x578B;-transformation-&#x7684;-shuffle-read">&#x5178;&#x578B; transformation() &#x7684; shuffle read</h2>
+<h3 id="1-reducebykeyfunc">1. reduceByKey(func)</h3>
+<p>&#x4E0A;&#x9762;&#x521D;&#x6B65;&#x4ECB;&#x7ECD;&#x4E86; reduceByKey() &#x662F;&#x5982;&#x4F55;&#x5B9E;&#x73B0;&#x8FB9; fetch &#x8FB9; reduce() &#x7684;&#x3002;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;&#x867D;&#x7136; Example(WordCount) &#x4E2D;&#x7ED9;&#x51FA;&#x4E86;&#x5404;&#x4E2A; RDD &#x7684;&#x5185;&#x5BB9;&#xFF0C;&#x4F46;&#x4E00;&#x4E2A; partition &#x91CC;&#x9762;&#x7684; records &#x5E76;&#x4E0D;&#x662F;&#x540C;&#x65F6;&#x5B58;&#x5728;&#x7684;&#x3002;&#x6BD4;&#x5982;&#x5728; ShuffledRDD &#x4E2D;&#xFF0C;&#x6BCF; fetch &#x6765;&#x4E00;&#x4E2A; record &#x5C31;&#x7ACB;&#x5373;&#x8FDB;&#x5165;&#x4E86; func &#x8FDB;&#x884C;&#x5904;&#x7406;&#x3002;MapPartitionsRDD &#x4E2D;&#x7684;&#x6570;&#x636E;&#x662F; func &#x5728;&#x5168;&#x90E8; records &#x4E0A;&#x7684;&#x5904;&#x7406;&#x7ED3;&#x679C;&#x3002;&#x4ECE; record &#x7C92;&#x5EA6;&#x4E0A;&#x6765;&#x770B;&#xFF0C;reduce() &#x53EF;&#x4EE5;&#x8868;&#x793A;&#x5982;&#x4E0B;&#xFF1A;</p>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/reduceByKeyRecord.png" target="_blank"><img src="assets/reduceByKeyRecord.png" alt="shuffle-reduce"></a></p>
+<p>&#x53EF;&#x4EE5;&#x770B;&#x5230;&#xFF0C;fetch &#x6765;&#x7684; records &#x88AB;&#x9010;&#x4E2A; aggreagte &#x5230; HashMap &#x4E2D;&#xFF0C;&#x7B49;&#x5230;&#x6240;&#x6709; records &#x90FD;&#x8FDB;&#x5165; HashMap&#xFF0C;&#x5C31;&#x5F97;&#x5230;&#x6700;&#x540E;&#x7684;&#x5904;&#x7406;&#x7ED3;&#x679C;&#x3002;&#x552F;&#x4E00;&#x8981;&#x6C42;&#x662F; func &#x5FC5;&#x987B;&#x662F; commulative &#x7684;&#xFF08;&#x53C2;&#x89C1;&#x4E0A;&#x9762;&#x7684; Spark &#x7684; reduce() &#x7684;&#x4EE3;&#x7801;&#xFF09;&#x3002;</p>
+<p>ShuffledRDD &#x5230; MapPartitionsRDD &#x4F7F;&#x7528;&#x7684;&#x662F; mapPartitionsWithContext &#x64CD;&#x4F5C;&#x3002;</p>
+<p>&#x4E3A;&#x4E86;&#x51CF;&#x5C11;&#x6570;&#x636E;&#x4F20;&#x8F93;&#x91CF;&#xFF0C;MapReduce &#x53EF;&#x4EE5;&#x5728; map &#x7AEF;&#x5148;&#x8FDB;&#x884C; combine()&#xFF0C;&#x5176;&#x5B9E;&#x5728; Spark &#x4E5F;&#x53EF;&#x4EE5;&#x5B9E;&#x73B0;&#xFF0C;&#x53EA;&#x9700;&#x8981;&#x5C06;&#x4E0A;&#x56FE; ShuffledRDD =&gt; MapPartitionsRDD &#x7684; mapPartitionsWithContext &#x5728; ShuffleMapStage &#x4E2D;&#x4E5F;&#x8FDB;&#x884C;&#x4E00;&#x6B21;&#x5373;&#x53EF;&#xFF0C;&#x6BD4;&#x5982; reduceByKey &#x4F8B;&#x5B50;&#x4E2D; ParallelCollectionRDD =&gt; MapPartitionsRDD &#x5B8C;&#x6210;&#x7684;&#x5C31;&#x662F; map &#x7AEF;&#x7684; combine()&#x3002;</p>
+<p><strong>&#x5BF9;&#x6BD4; MapReduce &#x7684; map()-reduce() &#x548C; Spark &#x4E2D;&#x7684; reduceByKey()&#xFF1A;</strong></p>
+<ul>
+<li>map &#x7AEF;&#x7684;&#x533A;&#x522B;&#xFF1A;map() &#x6CA1;&#x6709;&#x533A;&#x522B;&#x3002;&#x5BF9;&#x4E8E; combine()&#xFF0C;MapReduce &#x5148; sort &#x518D; combine()&#xFF0C;Spark &#x76F4;&#x63A5;&#x5728; HashMap &#x4E0A;&#x8FDB;&#x884C; combine()&#x3002;</li>
+<li>reduce &#x7AEF;&#x533A;&#x522B;&#xFF1A;MapReduce &#x7684; shuffle &#x9636;&#x6BB5;&#x5148; fetch &#x6570;&#x636E;&#xFF0C;&#x6570;&#x636E;&#x91CF;&#x5230;&#x8FBE;&#x4E00;&#x5B9A;&#x89C4;&#x6A21;&#x540E; combine()&#xFF0C;&#x518D;&#x5C06;&#x5269;&#x4F59;&#x6570;&#x636E; merge-sort &#x540E; reduce()&#xFF0C;reduce() &#x975E;&#x5E38;&#x7075;&#x6D3B;&#x3002;Spark &#x8FB9; fetch &#x8FB9; reduce()&#xFF08;&#x5728; HashMap &#x4E0A;&#x6267;&#x884C; func&#xFF09;&#xFF0C;&#x56E0;&#x6B64;&#x8981;&#x6C42; func &#x7B26;&#x5408; commulative &#x7684;&#x7279;&#x6027;&#x3002;</li>
+</ul>
+<p><strong>&#x4ECE;&#x5185;&#x5B58;&#x5229;&#x7528;&#x4E0A;&#x6765;&#x5BF9;&#x6BD4;&#xFF1A;</strong></p>
+<ul>
+<li>map &#x7AEF;&#x533A;&#x522B;&#xFF1A;MapReduce &#x9700;&#x8981;&#x5F00;&#x4E00;&#x4E2A;&#x5927;&#x578B;&#x73AF;&#x5F62;&#x7F13;&#x51B2;&#x533A;&#x6765;&#x6682;&#x5B58;&#x548C;&#x6392;&#x5E8F; map() &#x7684;&#x90E8;&#x5206;&#x8F93;&#x51FA;&#x7ED3;&#x679C;&#xFF0C;&#x4F46; combine() &#x4E0D;&#x9700;&#x8981;&#x989D;&#x5916;&#x7A7A;&#x95F4;&#xFF08;&#x9664;&#x975E;&#x7528;&#x6237;&#x81EA;&#x5DF1;&#x5B9A;&#x4E49;&#xFF09;&#x3002; Spark &#x9700;&#x8981; HashMap &#x5185;&#x5B58;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x6765;&#x8FDB;&#x884C; combine()&#xFF0C;&#x540C;&#x65F6;&#x8F93;&#x51FA; records &#x5230;&#x78C1;&#x76D8;&#x4E0A;&#x65F6;&#x4E5F;&#x9700;&#x8981;&#x4E00;&#x4E2A;&#x5C0F;&#x7684; buffer&#xFF08;bucket&#xFF09;&#x3002;</li>
+<li>reduce &#x7AEF;&#x533A;&#x522B;&#xFF1A;MapReduce &#x9700;&#x8981;&#x4E00;&#x90E8;&#x5206;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#x6765;&#x5B58;&#x50A8; shuffle &#x8FC7;&#x6765;&#x7684;&#x6570;&#x636E;&#xFF0C;combine() &#x548C; reduce() &#x4E0D;&#x9700;&#x8981;&#x989D;&#x5916;&#x7A7A;&#x95F4;&#xFF0C;&#x56E0;&#x4E3A;&#x5B83;&#x4EEC;&#x7684;&#x8F93;&#x5165;&#x6570;&#x636E;&#x5206;&#x6BB5;&#x6709;&#x5E8F;&#xFF0C;&#x53EA;&#x9700;&#x5F52;&#x5E76;&#x4E00;&#x4E0B;&#x5C31;&#x53EF;&#x4EE5;&#x5F97;&#x5230;&#x3002;&#x5728; Spark &#x4E2D;&#xFF0C;fetch &#x65F6;&#x9700;&#x8981; softBuffer&#xFF0C;&#x5904;&#x7406;&#x6570;&#x636E;&#x65F6;&#x5982;&#x679C;&#x53EA;&#x4F7F;&#x7528;&#x5185;&#x5B58;&#xFF0C;&#x90A3;&#x4E48;&#x9700;&#x8981; HashMap &#x6765;&#x6301;&#x6709;&#x5904;&#x7406;&#x540E;&#x7684;&#x7ED3;&#x679C;&#x3002;&#x5982;&#x679C;&#x4F7F;&#x7528;&#x5185;&#x5B58;&#xFF0B;&#x78C1;&#x76D8;&#xFF0C;&#x90A3;&#x4E48;&#x5728; HashMap &#x5B58;&#x653E;&#x4E00;&#x90E8;&#x5206;&#x5904;&#x7406;&#x540E;&#x7684;&#x6570;&#x636E;&#x3002;</li>
+</ul>
+<h3 id="2-groupbykeynumpartitions">2. groupByKey(numPartitions)</h3>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/ShuffleGroupByKey.png" target="_blank"><img src="assets/ShuffleGroupByKey.png" alt="ShuffleGroupByKey"></a></p>
+<p>&#x4E0E; reduceByKey() &#x6D41;&#x7A0B;&#x4E00;&#x6837;&#xFF0C;&#x53EA;&#x662F; func &#x53D8;&#x6210; <code>result = result ++ record.value</code>&#xFF0C;&#x529F;&#x80FD;&#x662F;&#x5C06;&#x6BCF;&#x4E2A; key &#x5BF9;&#x5E94;&#x7684;&#x6240;&#x6709; values &#x94FE;&#x63A5;&#x5728;&#x4E00;&#x8D77;&#x3002;result &#x6765;&#x81EA; hashMap.get(record.key)&#xFF0C;&#x8BA1;&#x7B97;&#x540E;&#x7684; result &#x4F1A;&#x518D;&#x6B21;&#x88AB; put &#x5230; hashMap &#x4E2D;&#x3002;&#x4E0E; reduceByKey() &#x7684;&#x533A;&#x522B;&#x5C31;&#x662F; groupByKey() &#x6CA1;&#x6709; map &#x7AEF;&#x7684; combine()&#x3002;&#x5BF9;&#x4E8E; groupByKey() &#x6765;&#x8BF4; map &#x7AEF;&#x7684; combine() &#x53EA;&#x662F;&#x51CF;&#x5C11;&#x4E86;&#x91CD;&#x590D; Key &#x5360;&#x7528;&#x7684;&#x7A7A;&#x95F4;&#xFF0C;&#x5982;&#x679C; key &#x91CD;&#x590D;&#x7387;&#x4E0D;&#x9AD8;&#xFF0C;&#x6CA1;&#x5FC5;&#x8981; combine()&#xFF0C;&#x5426;&#x5219;&#xFF0C;&#x6700;&#x597D;&#x80FD;&#x591F; combine()&#x3002;</p>
+<h3 id="3-distinctnumpartitions">3. distinct(numPartitions)</h3>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/ShuffleDistinct.png" target="_blank"><img src="assets/ShuffleDistinct.png" alt="ShuffleDistinct"></a></p>
+<p>&#x4E0E; reduceByKey() &#x6D41;&#x7A0B;&#x4E00;&#x6837;&#xFF0C;&#x53EA;&#x662F; func &#x53D8;&#x6210; <code>result = result == null? record.value : result</code>&#xFF0C;&#x5982;&#x679C; HashMap &#x4E2D;&#x6CA1;&#x6709;&#x8BE5; record &#x5C31;&#x5C06;&#x5176;&#x653E;&#x5165;&#xFF0C;&#x5426;&#x5219;&#x820D;&#x5F03;&#x3002;&#x4E0E; reduceByKey() &#x76F8;&#x540C;&#xFF0C;&#x5728;map &#x7AEF;&#x5B58;&#x5728; combine()&#x3002;</p>
+<h3 id="4-cogroupotherrdd-numpartitions">4. cogroup(otherRDD, numPartitions)</h3>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/ShuffleCoGroup.png" target="_blank"><img src="assets/ShuffleCoGroup.png" alt="ShuffleCoGroup"></a></p>
+<p>CoGroupedRDD &#x53EF;&#x80FD;&#x6709; 0 &#x4E2A;&#x3001;1 &#x4E2A;&#x6216;&#x8005;&#x591A;&#x4E2A; ShuffleDependency&#x3002;&#x4F46;&#x5E76;&#x4E0D;&#x662F;&#x8981;&#x4E3A;&#x6BCF;&#x4E00;&#x4E2A; ShuffleDependency &#x5EFA;&#x7ACB;&#x4E00;&#x4E2A; HashMap&#xFF0C;&#x800C;&#x662F;&#x6240;&#x6709;&#x7684; Dependency &#x5171;&#x7528;&#x4E00;&#x4E2A; HashMap&#x3002;&#x4E0E; reduceByKey() &#x4E0D;&#x540C;&#x7684;&#x662F;&#xFF0C;HashMap &#x5728; CoGroupedRDD &#x7684; compute() &#x4E2D;&#x5EFA;&#x7ACB;&#xFF0C;&#x800C;&#x4E0D;&#x662F;&#x5728; mapPartitionsWithContext() &#x4E2D;&#x5EFA;&#x7ACB;&#x3002;</p>
+<p>&#x7C97;&#x7EBF;&#x8868;&#x793A;&#x7684; task &#x9996;&#x5148; new &#x51FA;&#x4E00;&#x4E2A; Array[ArrayBuffer(), ArrayBuffer()]&#xFF0C;ArrayBuffer() &#x7684;&#x4E2A;&#x6570;&#x4E0E;&#x53C2;&#x4E0E; cogroup &#x7684; RDD &#x4E2A;&#x6570;&#x76F8;&#x540C;&#x3002;func &#x7684;&#x903B;&#x8F91;&#x662F;&#x8FD9;&#x6837;&#x7684;&#xFF1A;&#x6BCF;&#x5F53;&#x4ECE; RDD a &#x4E2D; shuffle &#x8FC7;&#x6765;&#x4E00;&#x4E2A; <key, value=""> record &#x5C31;&#x5C06;&#x5176;&#x6DFB;&#x52A0;&#x5230; hashmap.get(Key) &#x5BF9;&#x5E94;&#x7684; Array &#x4E2D;&#x7684;&#x7B2C;&#x4E00;&#x4E2A; ArrayBuffer() &#x4E2D;&#xFF0C;&#x6BCF;&#x5F53;&#x4ECE; RDD b &#x4E2D; shuffle &#x8FC7;&#x6765;&#x4E00;&#x4E2A; record&#xFF0C;&#x5C31;&#x5C06;&#x5176;&#x6DFB;&#x52A0;&#x5230;&#x5BF9;&#x5E94;&#x7684; Array &#x4E2D;&#x7684;&#x7B2C;&#x4E8C;&#x4E2A; ArrayBuffer()&#x3002;</key,></p>
+<p>CoGroupedRDD =&gt; MappedValuesRDD &#x5BF9;&#x5E94; mapValues() &#x64CD;&#x4F5C;&#xFF0C;&#x5C31;&#x662F;&#x5C06; [ArrayBuffer(), ArrayBuffer()] &#x53D8;&#x6210; [Iterable[V], Iterable[W]]&#x3002;</p>
+<h3 id="5-intersectionotherrdd-&#x548C;-joinotherrdd-numpartitions">5. intersection(otherRDD) &#x548C; join(otherRDD, numPartitions)</h3>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/ShuffleIntersection.png" target="_blank"><img src="assets/ShuffleIntersection.png" alt="intersection"></a></p>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/ShuffleJoin.png" target="_blank"><img src="assets/ShuffleJoin.png" alt="join"></a>&#x8FD9;&#x4E24;&#x4E2A;&#x64CD;&#x4F5C;&#x4E2D;&#x5747;&#x4F7F;&#x7528;&#x4E86; cogroup&#xFF0C;&#x6240;&#x4EE5; shuffle &#x7684;&#x5904;&#x7406;&#x65B9;&#x5F0F;&#x4E0E; cogroup &#x4E00;&#x6837;&#x3002;</p>
+<h3 id="6-sortbykeyascending-numpartitions">6. sortByKey(ascending, numPartitions)</h3>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/ShuffleSortByKey.png" target="_blank"><img src="assets/ShuffleSortByKey.png" alt="sortByKey"></a></p>
+<p>sortByKey() &#x4E2D; ShuffledRDD =&gt; MapPartitionsRDD &#x7684;&#x5904;&#x7406;&#x903B;&#x8F91;&#x4E0E; reduceByKey() &#x4E0D;&#x592A;&#x4E00;&#x6837;&#xFF0C;&#x6CA1;&#x6709;&#x4F7F;&#x7528; HashMap &#x548C; func &#x6765;&#x5904;&#x7406; fetch &#x8FC7;&#x6765;&#x7684; records&#x3002;</p>
+<p>sortByKey() &#x4E2D; ShuffledRDD =&gt; MapPartitionsRDD &#x7684;&#x5904;&#x7406;&#x903B;&#x8F91;&#x662F;&#xFF1A;&#x5C06; shuffle &#x8FC7;&#x6765;&#x7684;&#x4E00;&#x4E2A;&#x4E2A; record &#x5B58;&#x653E;&#x5230;&#x4E00;&#x4E2A; Array &#x91CC;&#xFF0C;&#x7136;&#x540E;&#x6309;&#x7167; Key &#x6765;&#x5BF9; Array &#x4E2D;&#x7684; records &#x8FDB;&#x884C; sort&#x3002;</p>
+<h3 id="7-coalescenumpartitions-shuffle--true">7. coalesce(numPartitions, shuffle = true)</h3>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/ShuffleCoalesce.png" target="_blank"><img src="assets/ShuffleCoalesce.png" alt="Coalesce"></a></p>
+<p>coalesce() &#x867D;&#x7136;&#x6709; ShuffleDependency&#xFF0C;&#x4F46;&#x4E0D;&#x9700;&#x8981;&#x5BF9; shuffle &#x8FC7;&#x6765;&#x7684; records &#x8FDB;&#x884C; aggregate&#xFF0C;&#x6240;&#x4EE5;&#x6CA1;&#x6709;&#x5EFA;&#x7ACB; HashMap&#x3002;&#x6BCF; shuffle &#x4E00;&#x4E2A; record&#xFF0C;&#x5C31;&#x76F4;&#x63A5;&#x6D41;&#x5411; CoalescedRDD&#xFF0C;&#x8FDB;&#x800C;&#x6D41;&#x5411; MappedRDD &#x4E2D;&#x3002;</p>
+<h2 id="shuffle-read-&#x4E2D;&#x7684;-hashmap">Shuffle read &#x4E2D;&#x7684; HashMap</h2>
+<p>HashMap &#x662F; Spark shuffle read &#x8FC7;&#x7A0B;&#x4E2D;&#x9891;&#x7E41;&#x4F7F;&#x7528;&#x7684;&#x3001;&#x7528;&#x4E8E; aggregate &#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x3002;Spark &#x8BBE;&#x8BA1;&#x4E86;&#x4E24;&#x79CD;&#xFF1A;&#x4E00;&#x79CD;&#x662F;&#x5168;&#x5185;&#x5B58;&#x7684; AppendOnlyMap&#xFF0C;&#x53E6;&#x4E00;&#x79CD;&#x662F;&#x5185;&#x5B58;&#xFF0B;&#x78C1;&#x76D8;&#x7684; ExternalAppendOnlyMap&#x3002;&#x4E0B;&#x9762;&#x6211;&#x4EEC;&#x6765;&#x5206;&#x6790;&#x4E00;&#x4E0B;<strong>&#x4E24;&#x8005;&#x7279;&#x6027;&#x53CA;&#x5185;&#x5B58;&#x4F7F;&#x7528;&#x60C5;&#x51B5;</strong>&#x3002;</p>
+<h3 id="1-appendonlymap">1. AppendOnlyMap</h3>
+<p>AppendOnlyMap &#x7684;&#x5B98;&#x65B9;&#x4ECB;&#x7ECD;&#x662F; A simple open hash table optimized for the append-only use case, where keys are never removed, but the value for each key may be changed&#x3002;&#x610F;&#x601D;&#x662F;&#x7C7B;&#x4F3C; HashMap&#xFF0C;&#x4F46;&#x6CA1;&#x6709;<code>remove(key)</code>&#x65B9;&#x6CD5;&#x3002;&#x5176;&#x5B9E;&#x73B0;&#x539F;&#x7406;&#x5F88;&#x7B80;&#x5355;&#xFF0C;&#x5F00;&#x4E00;&#x4E2A;&#x5927; Object &#x6570;&#x7EC4;&#xFF0C;&#x84DD;&#x8272;&#x90E8;&#x5206;&#x5B58;&#x50A8; Key&#xFF0C;&#x767D;&#x8272;&#x90E8;&#x5206;&#x5B58;&#x50A8; Value&#x3002;&#x5982;&#x4E0B;&#x56FE;&#xFF1A;</p>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/appendonlymap.png" target="_blank"><img src="assets/appendonlymap-1545202036864.png" alt="AppendOnlyMap"></a></p>
+<p>&#x5F53;&#x8981; put(K, V) &#x65F6;&#xFF0C;&#x5148; hash(K) &#x627E;&#x5B58;&#x653E;&#x4F4D;&#x7F6E;&#xFF0C;<strong>&#x5982;&#x679C;&#x5B58;&#x653E;&#x4F4D;&#x7F6E;&#x5DF2;&#x7ECF;&#x88AB;&#x5360;&#x7528;&#xFF0C;&#x5C31;&#x4F7F;&#x7528; Quadratic probing &#x63A2;&#x6D4B;&#x65B9;&#x6CD5;&#x6765;&#x627E;&#x4E0B;&#x4E00;&#x4E2A;&#x7A7A;&#x95F2;&#x4F4D;&#x7F6E;</strong>&#x3002;&#x5BF9;&#x4E8E;&#x56FE;&#x4E2D;&#x7684; K6 &#x6765;&#x8BF4;&#xFF0C;&#x7B2C;&#x4E09;&#x6B21;&#x67E5;&#x627E;&#x627E;&#x5230; K4 &#x540E;&#x9762;&#x7684;&#x7A7A;&#x95F2;&#x4F4D;&#x7F6E;&#xFF0C;&#x653E;&#x8FDB;&#x53BB;&#x5373;&#x53EF;&#x3002;get(K6) &#x7684;&#x65F6;&#x5019;&#x7C7B;&#x4F3C;&#xFF0C;&#x627E;&#x4E09;&#x6B21;&#x627E;&#x5230; K6&#xFF0C;&#x53D6;&#x51FA;&#x7D27;&#x6328;&#x7740;&#x7684; V6&#xFF0C;&#x4E0E;&#x5148;&#x6765;&#x7684; value &#x505A; func&#xFF0C;&#x7ED3;&#x679C;&#x91CD;&#x65B0;&#x653E;&#x5230; V6 &#x7684;&#x4F4D;&#x7F6E;&#x3002;</p>
+<p>&#x8FED;&#x4EE3; AppendOnlyMap &#x4E2D;&#x7684;&#x5143;&#x7D20;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4ECE;&#x524D;&#x5230;&#x540E;&#x626B;&#x63CF;&#x8F93;&#x51FA;&#x3002;</p>
+<p>&#x5982;&#x679C; Array &#x7684;&#x5229;&#x7528;&#x7387;&#x8FBE;&#x5230; 70%&#xFF0C;&#x90A3;&#x4E48;&#x5C31;&#x6269;&#x5F20;&#x4E00;&#x500D;&#xFF0C;&#x5E76;&#x5BF9;&#x6240;&#x6709; key &#x8FDB;&#x884C; rehash &#x540E;&#xFF0C;&#x91CD;&#x65B0;&#x6392;&#x5217;&#x6BCF;&#x4E2A; key &#x7684;&#x4F4D;&#x7F6E;&#x3002;</p>
+<p>AppendOnlyMap &#x8FD8;&#x6709;&#x4E00;&#x4E2A; <code>destructiveSortedIterator(): Iterator[(K, V)]</code> &#x65B9;&#x6CD5;&#xFF0C;&#x53EF;&#x4EE5;&#x8FD4;&#x56DE; Array &#x4E2D;&#x6392;&#x5E8F;&#x540E;&#x7684; (K, V) pairs&#x3002;&#x5B9E;&#x73B0;&#x65B9;&#x6CD5;&#x5F88;&#x7B80;&#x5355;&#xFF1A;&#x5148;&#x5C06;&#x6240;&#x6709; (K, V) pairs compact &#x5230; Array &#x7684;&#x524D;&#x7AEF;&#xFF0C;&#x5E76;&#x4F7F;&#x5F97;&#x6BCF;&#x4E2A; (K, V) &#x5360;&#x4E00;&#x4E2A;&#x4F4D;&#x7F6E;&#xFF08;&#x539F;&#x6765;&#x5360;&#x4E24;&#x4E2A;&#xFF09;&#xFF0C;&#x4E4B;&#x540E;&#x76F4;&#x63A5;&#x8C03;&#x7528; Array.sort() &#x6392;&#x5E8F;&#xFF0C;&#x4E0D;&#x8FC7;&#x8FD9;&#x6837;&#x505A;&#x4F1A;&#x7834;&#x574F;&#x6570;&#x7EC4;&#xFF08;key &#x7684;&#x4F4D;&#x7F6E;&#x53D8;&#x5316;&#x4E86;&#xFF09;&#x3002;</p>
+<h3 id="2-externalappendonlymap">2. ExternalAppendOnlyMap</h3>
+<p><a href="https://github.com/JerryLead/SparkInternals/blob/master/markdown/PNGfigures/ExternalAppendOnlyMap.png" target="_blank"><img src="assets/ExternalAppendOnlyMap-1545202037753.png" alt="AppendOnlyMap"></a></p>
+<p>&#x76F8;&#x6BD4; AppendOnlyMap&#xFF0C;ExternalAppendOnlyMap &#x7684;&#x5B9E;&#x73B0;&#x7565;&#x590D;&#x6742;&#xFF0C;&#x4F46;&#x903B;&#x8F91;&#x5176;&#x5B9E;&#x5F88;&#x7B80;&#x5355;&#xFF0C;&#x7C7B;&#x4F3C; Hadoop MapReduce &#x4E2D;&#x7684; shuffle-merge-combine-sort &#x8FC7;&#x7A0B;&#xFF1A;</p>
+<p><font color="red"><strong>ExternalAppendOnlyMap &#x6301;&#x6709;&#x4E00;&#x4E2A; AppendOnlyMap</strong></font>&#xFF0C;shuffle &#x6765;&#x7684;&#x4E00;&#x4E2A;&#x4E2A; (K, V) record &#x5148; insert &#x5230; AppendOnlyMap &#x4E2D;&#xFF0C;insert &#x8FC7;&#x7A0B;&#x4E0E;&#x539F;&#x59CB;&#x7684; AppendOnlyMap &#x4E00;&#x6A21;&#x4E00;&#x6837;&#x3002;<strong>&#x5982;&#x679C; AppendOnlyMap &#x5FEB;&#x88AB;&#x88C5;&#x6EE1;&#x65F6;&#x68C0;&#x67E5;&#x4E00;&#x4E0B;&#x5185;&#x5B58;&#x5269;&#x4F59;&#x7A7A;&#x95F4;&#x662F;&#x5426;&#x53EF;&#x4EE5;&#x591F;&#x6269;&#x5C55;&#xFF0C;&#x591F;&#x5C31;&#x76F4;&#x63A5;&#x5728;&#x5185;&#x5B58;&#x4E2D;&#x6269;&#x5C55;&#xFF0C;&#x4E0D;&#x591F;&#x5C31; sort &#x4E00;&#x4E0B; AppendOnlyMap&#xFF0C;&#x5C06;&#x5176;&#x5185;&#x90E8;&#x6240;&#x6709; records &#x90FD; spill &#x5230;&#x78C1;&#x76D8;&#x4E0A;&#x3002;</strong>&#x56FE;&#x4E2D; spill &#x4E86; 4 &#x6B21;&#xFF0C;&#x6BCF;&#x6B21; spill &#x5B8C;&#x5728;&#x78C1;&#x76D8;&#x4E0A;&#x751F;&#x6210;&#x4E00;&#x4E2A; spilledMap &#x6587;&#x4EF6;&#xFF0C;&#x7136;&#x540E;&#x91CD;&#x65B0; new &#x51FA;&#x6765;&#x4E00;&#x4E2A; AppendOnlyMap&#x3002;&#x6700;&#x540E;&#x4E00;&#x4E2A; (K, V) record insert &#x5230; AppendOnlyMap &#x540E;&#xFF0C;&#x8868;&#x793A;&#x6240;&#x6709; shuffle &#x6765;&#x7684; records &#x90FD;&#x88AB;&#x653E;&#x5230;&#x4E86; ExternalAppendOnlyMap &#x4E2D;&#xFF0C;&#x4F46;&#x4E0D;&#x8868;&#x793A; records &#x5DF2;&#x7ECF;&#x88AB;&#x5904;&#x7406;&#x5B8C;&#xFF0C;&#x56E0;&#x4E3A;&#x6BCF;&#x6B21; insert &#x7684;&#x65F6;&#x5019;&#xFF0C;&#x65B0;&#x6765;&#x7684; record &#x53EA;&#x4E0E; AppendOnlyMap &#x4E2D;&#x7684; records &#x8FDB;&#x884C; aggregate&#xFF0C;&#x5E76;&#x4E0D;&#x662F;&#x4E0E;&#x6240;&#x6709;&#x7684; records &#x8FDB;&#x884C; aggregate&#xFF08;&#x4E00;&#x4E9B; records &#x5DF2;&#x7ECF;&#x88AB; spill &#x5230;&#x78C1;&#x76D8;&#x4E0A;&#x4E86;&#xFF09;&#x3002;&#x56E0;&#x6B64;&#x5F53;&#x9700;&#x8981; aggregate &#x7684;&#x6700;&#x7EC8;&#x7ED3;&#x679C;&#x65F6;&#xFF0C;&#x9700;&#x8981;&#x5BF9; AppendOnlyMap &#x548C;&#x6240;&#x6709;&#x7684; spilledMaps &#x8FDB;&#x884C;&#x5168;&#x5C40; merge-aggregate&#x3002;</p>
+<p><strong>&#x5168;&#x5C40; merge-aggregate &#x7684;&#x6D41;&#x7A0B;&#x4E5F;&#x5F88;&#x7B80;&#x5355;&#xFF1A;</strong>&#x5148;&#x5C06; AppendOnlyMap &#x4E2D;&#x7684; records &#x8FDB;&#x884C; sort&#xFF0C;&#x5F62;&#x6210; sortedMap&#x3002;&#x7136;&#x540E;&#x5229;&#x7528; DestructiveSortedIterator &#x548C; DiskMapIterator &#x5206;&#x522B;&#x4ECE; sortedMap &#x548C;&#x5404;&#x4E2A; spilledMap &#x8BFB;&#x51FA;&#x4E00;&#x90E8;&#x5206;&#x6570;&#x636E;&#xFF08;StreamBuffer&#xFF09;&#x653E;&#x5230; mergeHeap &#x91CC;&#x9762;&#x3002;StreamBuffer &#x91CC;&#x9762;&#x5305;&#x542B;&#x7684; records &#x9700;&#x8981;&#x5177;&#x6709;&#x76F8;&#x540C;&#x7684; hash(key)&#xFF0C;&#x6240;&#x4EE5;&#x56FE;&#x4E2D;&#x7B2C;&#x4E00;&#x4E2A; spilledMap &#x53EA;&#x8BFB;&#x51FA;&#x524D;&#x4E09;&#x4E2A; records &#x8FDB;&#x5165; StreamBuffer&#x3002;mergeHeap &#x987E;&#x540D;&#x601D;&#x4E49;&#x5C31;&#x662F;&#x4F7F;&#x7528;&#x5806;&#x6392;&#x5E8F;&#x4E0D;&#x65AD;&#x63D0;&#x53D6;&#x51FA; hash(firstRecord.Key) &#x76F8;&#x540C;&#x7684; StreamBuffer&#xFF0C;&#x5E76;&#x5C06;&#x5176;&#x4E00;&#x4E2A;&#x4E2A;&#x653E;&#x5165; mergeBuffers &#x4E2D;&#xFF0C;&#x653E;&#x5165;&#x7684;&#x65F6;&#x5019;&#x4E0E;&#x5DF2;&#x7ECF;&#x5B58;&#x5728;&#x4E8E; mergeBuffers &#x4E2D;&#x7684; StreamBuffer &#x8FDB;&#x884C; merge-combine&#xFF0C;&#x7B2C;&#x4E00;&#x4E2A;&#x88AB;&#x653E;&#x5165; mergeBuffers &#x7684; StreamBuffer &#x88AB;&#x79F0;&#x4E3A; minBuffer&#xFF0C;&#x90A3;&#x4E48; minKey &#x5C31;&#x662F; minBuffer &#x4E2D;&#x7B2C;&#x4E00;&#x4E2A; record &#x7684; key&#x3002;&#x5F53; merge-combine &#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4E0E; minKey &#x76F8;&#x540C;&#x7684; records &#x88AB; aggregate &#x4E00;&#x8D77;&#xFF0C;&#x7136;&#x540E;&#x8F93;&#x51FA;&#x3002;&#x6574;&#x4E2A; merge-combine &#x5728; mergeBuffers &#x4E2D;&#x7ED3;&#x675F;&#x540E;&#xFF0C;StreamBuffer &#x5269;&#x4F59;&#x7684; records &#x968F;&#x7740; StreamBuffer &#x91CD;&#x65B0;&#x8FDB;&#x5165; mergeHeap&#x3002;&#x4E00;&#x65E6;&#x67D0;&#x4E2A; StreamBuffer &#x5728; merge-combine &#x540E;&#x53D8;&#x4E3A;&#x7A7A;&#xFF08;&#x91CC;&#x9762;&#x7684; records &#x90FD;&#x88AB;&#x8F93;&#x51FA;&#x4E86;&#xFF09;&#xFF0C;&#x90A3;&#x4E48;&#x4F1A;&#x4F7F;&#x7528; DestructiveSortedIterator &#x6216; DiskMapIterator &#x91CD;&#x65B0;&#x88C5;&#x586B; hash(key) &#x76F8;&#x540C;&#x7684; records&#xFF0C;&#x7136;&#x540E;&#x518D;&#x91CD;&#x65B0;&#x8FDB;&#x5165; mergeHeap&#x3002;</p>
+<p>&#x6574;&#x4E2A; insert-merge-aggregate &#x7684;&#x8FC7;&#x7A0B;&#x6709;&#x4E09;&#x70B9;&#x9700;&#x8981;&#x8FDB;&#x4E00;&#x6B65;&#x63A2;&#x8BA8;&#x4E00;&#x4E0B;&#xFF1A;</p>
+<ul>
+<li><p>&#x5185;&#x5B58;&#x5269;&#x4F59;&#x7A7A;&#x95F4;&#x68C0;&#x6D4B;</p>
+<p>&#x4E0E; Hadoop MapReduce &#x89C4;&#x5B9A; reducer &#x4E2D; 70% &#x7684;&#x7A7A;&#x95F4;&#x53EF;&#x7528;&#x4E8E; shuffle-sort &#x7C7B;&#x4F3C;&#xFF0C;Spark &#x4E5F;&#x89C4;&#x5B9A; executor &#x4E2D; <code>spark.shuffle.memoryFraction * spark.shuffle.safetyFraction</code> &#x7684;&#x7A7A;&#x95F4;&#xFF08;&#x9ED8;&#x8BA4;&#x662F;<code>0.3 * 0.8</code>&#xFF09;&#x53EF;&#x7528;&#x4E8E; ExternalOnlyAppendMap&#x3002;<strong>Spark &#x7565;&#x4FDD;&#x5B88;&#x662F;&#x4E0D;&#x662F;&#xFF1F;&#x66F4;&#x4FDD;&#x5B88;&#x7684;&#x662F;&#x8FD9; 24&#xFF05; &#x7684;&#x7A7A;&#x95F4;&#x4E0D;&#x662F;&#x5B8C;&#x5168;&#x7528;&#x4E8E;&#x4E00;&#x4E2A; ExternalOnlyAppendMap &#x7684;&#xFF0C;&#x800C;&#x662F;&#x7531;&#x5728; executor &#x4E0A;&#x540C;&#x65F6;&#x8FD0;&#x884C;&#x7684;&#x6240;&#x6709; reducer &#x5171;&#x4EAB;&#x7684;&#x3002;&#x4E3A;&#x6B64;&#xFF0C;exectuor &#x4E13;&#x95E8;&#x6301;&#x6709;&#x4E00;&#x4E2A; ShuffleMemroyMap: HashMap[threadId, occupiedMemory] &#x6765;&#x76D1;&#x63A7;&#x6BCF;&#x4E2A; reducer &#x4E2D; ExternalOnlyAppendMap &#x5360;&#x7528;&#x7684;&#x5185;&#x5B58;&#x91CF;&#x3002;&#x6BCF;&#x5F53; AppendOnlyMap &#x8981;&#x6269;&#x5C55;&#x65F6;&#xFF0C;&#x90FD;&#x4F1A;&#x8BA1;&#x7B97; ShuffleMemroyMap &#x6301;&#x6709;&#x7684;&#x6240;&#x6709; reducer &#x4E2D;&#x7684; AppendOnlyMap &#x5DF2;&#x5360;&#x7528;&#x7684;&#x5185;&#x5B58; &#xFF0B; &#x6269;&#x5C55;&#x540E;&#x7684;&#x5185;&#x5B58; &#x662F;&#x4F1A;&#x5426;&#x4F1A;&#x5927;&#x4E8E;&#x5185;&#x5B58;&#x9650;&#x5236;&#xFF0C;&#x5927;&#x4E8E;&#x5C31;&#x4F1A;&#x5C06; AppendOnlyMap spill &#x5230;&#x78C1;&#x76D8;&#x3002;&#x6709;&#x4E00;&#x70B9;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;&#x524D; 1000 &#x4E2A; records &#x8FDB;&#x5165; AppendOnlyMap &#x7684;&#x65F6;&#x5019;&#x4E0D;&#x4F1A;&#x542F;&#x52A8;&#x662F;&#x5426;&#x8981; spill</strong> &#x7684;&#x68C0;&#x67E5;&#xFF0C;&#x9700;&#x8981;&#x6269;&#x5C55;&#x65F6;&#x5C31;&#x76F4;&#x63A5;&#x5728;&#x5185;&#x5B58;&#x4E2D;&#x6269;&#x5C55;&#x3002;</p>
+</li>
+<li><p>AppendOnlyMap &#x5927;&#x5C0F;&#x4F30;&#x8BA1;</p>
+<p>&#x4E3A;&#x4E86;&#x83B7;&#x77E5; AppendOnlyMap &#x5360;&#x7528;&#x7684;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#xFF0C;&#x53EF;&#x4EE5;&#x5728;&#x6BCF;&#x6B21;&#x6269;&#x5C55;&#x65F6;&#x90FD;&#x5C06; AppendOnlyMap reference &#x7684;&#x6240;&#x6709; objects &#x5927;&#x5C0F;&#x90FD;&#x7B97;&#x4E00;&#x904D;&#xFF0C;&#x7136;&#x540E;&#x52A0;&#x548C;&#xFF0C;&#x4F46;&#x8FD9;&#x6837;&#x505A;&#x975E;&#x5E38;&#x8017;&#x65F6;&#x3002;&#x6240;&#x4EE5; Spark &#x8BBE;&#x8BA1;&#x4E86;&#x7C97;&#x7565;&#x7684;&#x4F30;&#x7B97;&#x7B97;&#x6CD5;&#xFF0C;&#x7B97;&#x6CD5;&#x65F6;&#x95F4;&#x590D;&#x6742;&#x5EA6;&#x662F; O(1)&#xFF0C;&#x6838;&#x5FC3;&#x601D;&#x60F3;&#x662F;&#x5229;&#x7528; AppendOnlyMap &#x4E2D;&#x6BCF;&#x6B21; insert-aggregate record &#x540E; result &#x7684;&#x5927;&#x5C0F;&#x53D8;&#x5316;&#x53CA;&#x4E00;&#x5171; insert &#x7684; records &#x7684;&#x4E2A;&#x6570;&#x6765;&#x4F30;&#x7B97;&#x5927;&#x5C0F;&#xFF0C;&#x5177;&#x4F53;&#x89C1; <code>SizeTrackingAppendOnlyMap</code> &#x548C; <code>SizeEstimator</code>&#x3002;</p>
+</li>
+<li><p>Spill &#x8FC7;&#x7A0B;</p>
+<p>&#x4E0E; shuffle write &#x4E00;&#x6837;&#xFF0C;&#x5728; spill records &#x5230;&#x78C1;&#x76D8;&#x4E0A;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4F1A;&#x5EFA;&#x7ACB;&#x4E00;&#x4E2A; buffer &#x7F13;&#x51B2;&#x533A;&#xFF0C;&#x5927;&#x5C0F;&#x4ECD;&#x4E3A; <code>spark.shuffle.file.buffer.kb</code> &#xFF0C;&#x9ED8;&#x8BA4;&#x662F; 32KB&#x3002;&#x53E6;&#x5916;&#xFF0C;&#x7531;&#x4E8E; serializer &#x4E5F;&#x4F1A;&#x5206;&#x914D;&#x7F13;&#x51B2;&#x533A;&#x7528;&#x4E8E;&#x5E8F;&#x5217;&#x5316;&#x548C;&#x53CD;&#x5E8F;&#x5217;&#x5316;&#xFF0C;&#x6240;&#x4EE5;&#x5982;&#x679C;&#x4E00;&#x6B21; serialize &#x7684; records &#x8FC7;&#x591A;&#x7684;&#x8BDD;&#x7F13;&#x51B2;&#x533A;&#x4F1A;&#x53D8;&#x5F97;&#x5F88;&#x5927;&#x3002;Spark &#x9650;&#x5236;&#x6BCF;&#x6B21; serialize &#x7684; records &#x4E2A;&#x6570;&#x4E3A; <code>spark.shuffle.spill.batchSize</code>&#xFF0C;&#x9ED8;&#x8BA4;&#x662F; 10000&#x3002;</p>
+</li>
+</ul>
+<h2 id="discussion">Discussion</h2>
+<p>&#x901A;&#x8FC7;&#x672C;&#x7AE0;&#x7684;&#x4ECB;&#x7ECD;&#x53EF;&#x4EE5;&#x53D1;&#x73B0;&#xFF0C;&#x76F8;&#x6BD4; MapReduce &#x56FA;&#x5B9A;&#x7684; shuffle-combine-merge-reduce &#x7B56;&#x7565;&#xFF0C;Spark &#x66F4;&#x52A0;&#x7075;&#x6D3B;&#xFF0C;&#x4F1A;&#x6839;&#x636E;&#x4E0D;&#x540C;&#x7684; transformation() &#x7684;&#x8BED;&#x4E49;&#x53BB;&#x8BBE;&#x8BA1;&#x4E0D;&#x540C;&#x7684; shuffle-aggregate &#x7B56;&#x7565;&#xFF0C;&#x518D;&#x52A0;&#x4E0A;&#x4E0D;&#x540C;&#x7684;&#x5185;&#x5B58;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x6765;&#x6DF7;&#x642D;&#x51FA;&#x5408;&#x7406;&#x7684;&#x6267;&#x884C;&#x6D41;&#x7A0B;&#x3002;</p>
+<p>&#x8FD9;&#x7AE0;&#x4E3B;&#x8981;&#x8BA8;&#x8BBA;&#x4E86; Spark &#x662F;&#x600E;&#x4E48;&#x5728;&#x4E0D;&#x6392;&#x5E8F; records &#x7684;&#x60C5;&#x51B5;&#x4E0B;&#x5B8C;&#x6210; shuffle write &#x548C; shuffle read&#xFF0C;&#x4EE5;&#x53CA;&#x600E;&#x4E48;&#x5C06; shuffle &#x8FC7;&#x7A0B;&#x878D;&#x5165; RDD computing chain &#x4E2D;&#x7684;&#x3002;&#x9644;&#x5E26;&#x8BA8;&#x8BBA;&#x4E86;&#x5185;&#x5B58;&#x4E0E;&#x78C1;&#x76D8;&#x7684;&#x5E73;&#x8861;&#x4EE5;&#x53CA;&#x4E0E; Hadoop MapReduce shuffle &#x7684;&#x5F02;&#x540C;&#x3002;&#x4E0B;&#x4E00;&#x7AE0;&#x5C06;&#x4ECE;&#x90E8;&#x7F72;&#x56FE;&#x4EE5;&#x53CA;&#x8FDB;&#x7A0B;&#x901A;&#x4FE1;&#x89D2;&#x5EA6;&#x6765;&#x63CF;&#x8FF0; job &#x6267;&#x884C;&#x7684;&#x6574;&#x4E2A;&#x6D41;&#x7A0B;&#xFF0C;&#x4E5F;&#x4F1A;&#x6D89;&#x53CA; shuffle write &#x548C; shuffle read &#x4E2D;&#x7684;&#x6570;&#x636E;&#x4F4D;&#x7F6E;&#x83B7;&#x53D6;&#x95EE;&#x9898;&#x3002;</p>
+<p>&#x53E6;&#x5916;&#xFF0C;Jerry Shao &#x5199;&#x7684; <a href="http://jerryshao.me/architecture/2014/01/04/spark-shuffle-detail-investigation/" target="_blank">&#x8BE6;&#x7EC6;&#x63A2;&#x7A76;Spark&#x7684;shuffle&#x5B9E;&#x73B0;</a> &#x5F88;&#x8D5E;&#xFF0C;&#x91CC;&#x9762;&#x8FD8;&#x4ECB;&#x7ECD;&#x4E86; shuffle &#x8FC7;&#x7A0B;&#x5728; Spark &#x4E2D;&#x7684;&#x8FDB;&#x5316;&#x53F2;&#x3002;&#x76EE;&#x524D; sort-based &#x7684; shuffle &#x4E5F;&#x5728;&#x5B9E;&#x73B0;&#x5F53;&#x4E2D;&#xFF0C;stay tuned&#x3002;</p>
+</li>
+</ul>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="33.数据倾斜解决方案之使用随机数以及扩容表进行join.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 33.数据倾斜解决方案之使用随机数以及扩容表进行join">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"34.shuffleread中HashMap","level":"1.35","depth":1,"previous":{"title":"33.数据倾斜解决方案之使用随机数以及扩容表进行join","level":"1.34","depth":1,"path":"content/33.数据倾斜解决方案之使用随机数以及扩容表进行join.md","ref":"content/33.数据倾斜解决方案之使用随机数以及扩容表进行join.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"content/34.shuffleread中的HashMap.md","mtime":"2018-12-19T07:03:03.714Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-20T11:44:17.543Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
